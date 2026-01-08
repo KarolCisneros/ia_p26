@@ -1,0 +1,84 @@
+# uu_framework GitHub Pages Deployment
+# Builds and deploys the course site to GitHub Pages
+#
+# This workflow runs on push to main branch (professor's repo only)
+# Students' forks will not trigger deployment
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+# Sets permissions of the GITHUB_TOKEN
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: uu_framework/eleventy/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Install Node.js dependencies
+        working-directory: uu_framework/eleventy
+        run: npm ci
+
+      - name: Run preprocessing
+        run: |
+          python3 uu_framework/scripts/preprocess.py --verbose
+
+      - name: Build site with Eleventy
+        working-directory: uu_framework/eleventy
+        run: npx @11ty/eleventy
+        env:
+          NODE_ENV: production
+
+      - name: Build CSS with Tailwind
+        working-directory: uu_framework/eleventy
+        run: |
+          npx tailwindcss -i ./src/css/main.css -o ../../_site/css/styles.css --minify
+          cp -r ./src/css/themes ../../_site/css/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

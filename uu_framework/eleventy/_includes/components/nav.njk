@@ -1,0 +1,90 @@
+{# Sidebar navigation component #}
+
+{# Macro for generating URL from path #}
+{% macro itemUrl(item) %}
+{%- if item.type == "directory" and item.has_index -%}
+{{ ("/" + item.path + "/00_index/") | url }}
+{%- elif item.type == "directory" -%}
+{%- if item.children and item.children.length > 0 -%}
+{{ itemUrl(item.children[0]) }}
+{%- else -%}
+#
+{%- endif -%}
+{%- elif item.type == "file" -%}
+{{ ("/" + item.path | replace(".md", "") + "/") | url }}
+{%- else -%}
+#
+{%- endif -%}
+{% endmacro %}
+
+{# Clean title #}
+{% macro cleanTitle(title) %}
+{%- if title -%}{{ title | replace("?? ", "") | replace("??", "") }}{%- endif -%}
+{% endmacro %}
+
+<div class="space-y-1">
+  {% if hierarchy and hierarchy.children %}
+    {% for item in hierarchy.children %}
+    {% if item.title and not item.name.startsWith("??") and (item.type != "directory" or item.has_index or (item.children and item.children.length > 0)) %}
+
+    <div class="nav-group" data-expanded="true">
+      {# Section header with toggle #}
+      <div class="flex items-center">
+        {% if item.children and item.children.length > 0 %}
+        <button class="nav-toggle p-1 mr-1 rounded hover:bg-bg-tertiary text-text-muted hover:text-text transition-colors" onclick="this.parentElement.parentElement.dataset.expanded = this.parentElement.parentElement.dataset.expanded === 'true' ? 'false' : 'true'">
+          <svg class="w-3 h-3 transform transition-transform" style="transform: rotate(90deg)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+        {% else %}
+        <span class="w-5"></span>
+        {% endif %}
+
+        <a href="{{ itemUrl(item) | trim }}"
+           class="flex-1 flex items-center px-2 py-1.5 rounded text-sm font-medium transition-colors
+                  text-text-muted hover:text-text hover:bg-bg-tertiary">
+          {% if item.type == "directory" %}
+          <svg class="w-4 h-4 mr-2 text-accent-secondary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+          {% endif %}
+          <span class="truncate">{{ cleanTitle(item.title) | trim }}</span>
+        </a>
+      </div>
+
+      {# Children #}
+      {% if item.children and item.children.length > 0 %}
+      <div class="nav-children ml-5 mt-0.5 space-y-0.5 border-l border-border" style="display: block;">
+        {% for child in item.children %}
+        {% if child.title and child.type == "file" and not child.name.startsWith("00_") %}
+        <a href="{{ itemUrl(child) | trim }}"
+           class="flex items-center pl-3 pr-2 py-1 text-sm transition-colors rounded-r
+                  text-text-muted hover:text-text hover:bg-bg-tertiary hover:border-l-accent">
+          <span class="truncate">{{ cleanTitle(child.title) | trim }}</span>
+        </a>
+        {% elif child.type == "directory" and child.has_index %}
+        <a href="{{ itemUrl(child) | trim }}"
+           class="flex items-center pl-3 pr-2 py-1 text-sm transition-colors rounded-r
+                  text-text-muted hover:text-text hover:bg-bg-tertiary">
+          <svg class="w-3 h-3 mr-1.5 text-accent-secondary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+          <span class="truncate">{{ cleanTitle(child.title) | trim }}</span>
+        </a>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    {% endif %}
+    {% endfor %}
+  {% else %}
+  <p class="text-text-muted text-sm px-2 py-4">Sin contenido</p>
+  {% endif %}
+</div>
+
+<style>
+  .nav-group[data-expanded="false"] .nav-children { display: none !important; }
+  .nav-group[data-expanded="false"] .nav-toggle svg { transform: rotate(0deg) !important; }
+</style>

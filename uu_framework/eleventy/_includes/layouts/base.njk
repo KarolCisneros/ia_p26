@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-eva01">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if title and title != "Inicio" %}{{ title }} | {% endif %}{{ site.name | default("IA - ITAM") }}</title>
+  <meta name="description" content="{{ summary | default(site.description) }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ '/css/styles.css' | url }}">
+  <link rel="stylesheet" href="{{ '/css/themes/fonts.css' | url }}">
+  <link rel="stylesheet" href="{{ '/css/themes/eva01.css' | url }}" id="theme-stylesheet">
+
+  <style>
+    .sidebar {
+      transition: width 0.2s ease;
+      width: 16rem;
+    }
+    .sidebar.collapsed {
+      width: 3rem;
+    }
+    .sidebar.collapsed .sidebar-content { display: none; }
+    .sidebar.collapsed .sidebar-collapsed-content { display: flex; }
+    .sidebar .sidebar-collapsed-content { display: none; }
+
+    .main-content {
+      transition: margin-left 0.2s ease;
+      margin-left: 16rem;
+    }
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 3rem;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        position: fixed;
+        z-index: 50;
+        height: 100vh;
+        top: 0;
+        transform: translateX(0);
+        transition: transform 0.2s ease;
+      }
+      .sidebar.mobile-hidden {
+        transform: translateX(-100%);
+      }
+      .sidebar.collapsed { width: 16rem; }
+      .sidebar.collapsed .sidebar-content { display: block; }
+      .sidebar.collapsed .sidebar-collapsed-content { display: none; }
+      .main-content { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body class="bg-bg text-text min-h-screen font-sans antialiased">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar fixed left-0 top-0 h-screen bg-bg-secondary border-r border-border flex flex-col z-50">
+
+    <!-- Expanded content -->
+    <div class="sidebar-content flex flex-col h-full">
+      <!-- Header -->
+      <div class="h-12 flex items-center justify-between px-3 border-b border-border flex-shrink-0">
+        <a href="{{ '/' | url }}" class="flex items-center space-x-2 text-accent hover:text-accent-hover transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+          <span class="font-bold text-sm">IA ITAM</span>
+        </a>
+        <button id="sidebar-collapse" class="p-1.5 rounded hover:bg-bg-tertiary text-text-muted hover:text-accent transition-colors" title="Colapsar">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-3 px-2">
+        {% include "components/nav.njk" %}
+      </nav>
+
+      <!-- Footer -->
+      <div class="p-2 border-t border-border flex-shrink-0">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1">
+            <!-- Font size toggle -->
+            <button id="size-toggle" class="p-1.5 rounded text-text-muted hover:text-accent hover:bg-bg-tertiary transition-colors" title="Tamaño">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+              </svg>
+            </button>
+            <!-- OpenDyslexic toggle -->
+            <button id="font-toggle" class="p-1.5 rounded text-text-muted hover:text-accent hover:bg-bg-tertiary transition-colors" title="OpenDyslexic">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+              </svg>
+            </button>
+            <!-- Theme toggle -->
+            <button id="theme-toggle" class="p-1.5 rounded text-text-muted hover:text-accent hover:bg-bg-tertiary transition-colors" title="Tema">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </button>
+          </div>
+          <span class="text-xs text-text-muted">P26</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collapsed content -->
+    <div class="sidebar-collapsed-content flex-col h-full items-center py-2">
+      <button id="sidebar-expand" class="p-2 rounded hover:bg-bg-tertiary text-text-muted hover:text-accent transition-colors mb-2" title="Expandir">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+        </svg>
+      </button>
+      <a href="{{ '/' | url }}" class="p-2 rounded hover:bg-bg-tertiary text-accent hover:text-accent-hover transition-colors" title="Inicio">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+      </a>
+      <div class="flex-1"></div>
+      <button id="size-toggle-mini" class="p-2 rounded hover:bg-bg-tertiary text-text-muted hover:text-accent transition-colors mb-1" title="Tamaño">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+      </button>
+      <button id="font-toggle-mini" class="p-2 rounded hover:bg-bg-tertiary text-text-muted hover:text-accent transition-colors mb-1" title="OpenDyslexic">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+        </svg>
+      </button>
+      <button id="theme-toggle-mini" class="p-2 rounded hover:bg-bg-tertiary text-text-muted hover:text-accent transition-colors" title="Tema">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+  <!-- Main content -->
+  <div class="main-content min-h-screen flex flex-col">
+    <!-- Top bar -->
+    <header class="sticky top-0 z-30 h-12 bg-bg/95 backdrop-blur border-b border-border flex items-center px-4">
+      <button id="mobile-menu" class="p-2 -ml-2 rounded hover:bg-bg-secondary text-text-muted hover:text-accent transition-colors lg:hidden">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+      <nav class="flex items-center text-sm text-text-muted ml-2 lg:ml-0 overflow-hidden">
+        {% if breadcrumbs and breadcrumbs.length > 0 %}
+        <a href="{{ '/' | url }}" class="hover:text-accent transition-colors flex-shrink-0">Inicio</a>
+        {% for crumb in breadcrumbs %}
+        <svg class="w-4 h-4 mx-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        {% if crumb.url %}
+        <a href="{{ crumb.url | url }}" class="hover:text-accent transition-colors truncate">{{ crumb.title }}</a>
+        {% else %}
+        <span class="text-text truncate">{{ crumb.title }}</span>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <span>{{ title | default("Inicio") }}</span>
+        {% endif %}
+      </nav>
+    </header>
+
+    <!-- Content -->
+    <main id="main-content" class="flex-1 p-4 lg:p-6">
+      <div class="max-w-4xl">
+        {% if title and title != "Inicio" %}
+        <h1 class="text-2xl font-bold text-text mb-6">{{ title }}</h1>
+        {% endif %}
+
+        <article class="prose max-w-none">
+          {{ content | safe }}
+        </article>
+
+        {% if prevPage or nextPage %}
+        <nav class="mt-10 pt-6 border-t border-border grid grid-cols-2 gap-4">
+          {% if prevPage %}
+          <a href="{{ prevPage.url | url }}" class="group p-3 rounded-lg bg-bg-secondary hover:bg-bg-tertiary transition-colors">
+            <div class="text-xs text-text-muted">Anterior</div>
+            <div class="text-sm font-medium text-text group-hover:text-accent truncate">{{ prevPage.title }}</div>
+          </a>
+          {% else %}<div></div>{% endif %}
+          {% if nextPage %}
+          <a href="{{ nextPage.url | url }}" class="group p-3 rounded-lg bg-bg-secondary hover:bg-bg-tertiary transition-colors text-right">
+            <div class="text-xs text-text-muted">Siguiente</div>
+            <div class="text-sm font-medium text-text group-hover:text-accent truncate">{{ nextPage.title }}</div>
+          </a>
+          {% endif %}
+        </nav>
+        {% endif %}
+      </div>
+    </main>
+
+    <footer class="border-t border-border px-4 py-3 flex items-center justify-between text-xs text-text-muted">
+      <span>{{ site.name | default("IA - ITAM") }}</span>
+      <span class="text-accent">uu_framework</span>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const pathPrefix = '{{ "/" | url }}';
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const collapseBtn = document.getElementById('sidebar-collapse');
+      const expandBtn = document.getElementById('sidebar-expand');
+      const mobileMenuBtn = document.getElementById('mobile-menu');
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleMini = document.getElementById('theme-toggle-mini');
+      const fontToggle = document.getElementById('font-toggle');
+      const fontToggleMini = document.getElementById('font-toggle-mini');
+      const sizeToggle = document.getElementById('size-toggle');
+      const sizeToggleMini = document.getElementById('size-toggle-mini');
+      const themeStylesheet = document.getElementById('theme-stylesheet');
+
+      // Collapse/Expand sidebar (desktop)
+      function collapseSidebar() {
+        sidebar.classList.add('collapsed');
+        localStorage.setItem('uu-sidebar', 'collapsed');
+      }
+
+      function expandSidebar() {
+        sidebar.classList.remove('collapsed');
+        localStorage.setItem('uu-sidebar', 'expanded');
+      }
+
+      collapseBtn.addEventListener('click', collapseSidebar);
+      expandBtn.addEventListener('click', expandSidebar);
+
+      // Mobile menu
+      function openMobile() {
+        sidebar.classList.remove('mobile-hidden');
+        overlay.classList.remove('hidden');
+      }
+
+      function closeMobile() {
+        sidebar.classList.add('mobile-hidden');
+        overlay.classList.add('hidden');
+      }
+
+      mobileMenuBtn.addEventListener('click', openMobile);
+      overlay.addEventListener('click', closeMobile);
+
+      // Initialize mobile state
+      if (window.innerWidth < 1024) {
+        sidebar.classList.add('mobile-hidden');
+      }
+
+      // Load sidebar preference
+      if (localStorage.getItem('uu-sidebar') === 'collapsed' && window.innerWidth >= 1024) {
+        sidebar.classList.add('collapsed');
+      }
+
+      // Theme toggle
+      function toggleTheme() {
+        const isEva = document.documentElement.classList.contains('theme-eva01');
+        const newTheme = isEva ? 'light' : 'eva01';
+        document.documentElement.classList.remove('theme-eva01', 'theme-light');
+        document.documentElement.classList.add('theme-' + newTheme);
+        themeStylesheet.href = pathPrefix + 'css/themes/' + newTheme + '.css';
+        localStorage.setItem('uu-theme', newTheme);
+      }
+
+      themeToggle.addEventListener('click', toggleTheme);
+      themeToggleMini.addEventListener('click', toggleTheme);
+
+      // Font toggle
+      function updateFontStatus() {
+        const isDyslexic = document.body.classList.contains('font-dyslexic');
+        fontToggle.classList.toggle('text-accent', isDyslexic);
+        fontToggle.classList.toggle('bg-bg-tertiary', isDyslexic);
+        fontToggleMini.classList.toggle('text-accent', isDyslexic);
+      }
+
+      function toggleFont() {
+        document.body.classList.toggle('font-dyslexic');
+        localStorage.setItem('uu-dyslexic', document.body.classList.contains('font-dyslexic'));
+        updateFontStatus();
+      }
+
+      fontToggle.addEventListener('click', toggleFont);
+      fontToggleMini.addEventListener('click', toggleFont);
+
+      // Size toggle
+      const sizes = ['normal', 'large', 'x-large'];
+
+      function updateSizeStatus() {
+        const currentSize = localStorage.getItem('uu-size') || 'normal';
+        const isActive = currentSize !== 'normal';
+        sizeToggle.classList.toggle('text-accent', isActive);
+        sizeToggle.classList.toggle('bg-bg-tertiary', isActive);
+        sizeToggleMini.classList.toggle('text-accent', isActive);
+      }
+
+      function toggleSize() {
+        const currentSize = localStorage.getItem('uu-size') || 'normal';
+        const currentIndex = sizes.indexOf(currentSize);
+        const nextIndex = (currentIndex + 1) % sizes.length;
+        const newSize = sizes[nextIndex];
+
+        document.documentElement.classList.remove('size-normal', 'size-large', 'size-x-large');
+        document.documentElement.classList.add('size-' + newSize);
+        localStorage.setItem('uu-size', newSize);
+        updateSizeStatus();
+      }
+
+      sizeToggle.addEventListener('click', toggleSize);
+      sizeToggleMini.addEventListener('click', toggleSize);
+
+      // Load preferences
+      const savedTheme = localStorage.getItem('uu-theme');
+      if (savedTheme && savedTheme !== 'eva01') {
+        document.documentElement.classList.remove('theme-eva01');
+        document.documentElement.classList.add('theme-' + savedTheme);
+        themeStylesheet.href = pathPrefix + 'css/themes/' + savedTheme + '.css';
+      }
+
+      if (localStorage.getItem('uu-dyslexic') === 'true') {
+        document.body.classList.add('font-dyslexic');
+        updateFontStatus();
+      }
+
+      const savedSize = localStorage.getItem('uu-size');
+      if (savedSize && savedSize !== 'normal') {
+        document.documentElement.classList.add('size-' + savedSize);
+        updateSizeStatus();
+      }
+    })();
+  </script>
+
+</body>
+</html>

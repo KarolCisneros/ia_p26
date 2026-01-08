@@ -1,3 +1,10 @@
+# uu_framework - Static site generator
+_site/
+_backup_clase_*/
+node_modules/
+uu_framework/eleventy/_data/*.json
+!uu_framework/eleventy/_data/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
