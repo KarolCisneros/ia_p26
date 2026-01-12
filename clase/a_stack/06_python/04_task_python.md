@@ -1,6 +1,6 @@
-:::homework{id="A.6.4" title="Tarea 02: Script Python y Certificación" due="2026-01-28" points="20"}
+:::homework{id="A.6.4" title="Script de python 101" due="2026-01-28" points="10"}
 
-Completa el curso [Introduction to Python for Data Science](https://app.datacamp.com/learn/courses/intro-to-python-for-data-science), crea un script Python con clase/función/if-else, y envía todo mediante Pull Request.
+Crea un script Python con clase/función/if-else, y envía todo mediante Pull Request.
 
 :::
 
@@ -25,10 +25,6 @@ Esta es la forma más fácil. Puedes ejecutar el comando tú mismo o pedirle a C
 > **Prompt para Cursor:**
 > "Por favor lee el archivo `clase/README_FLOW.md` para entender cómo funciona el script de automatización. Luego, usa el script para iniciar una nueva tarea llamada `tarea-02-python`."
 
-```bash
-# Si prefieres hacerlo tú mismo:
-./clase/flow.sh start tarea-02-python
-```
 
 #### Opción Manual
 1.  Sincroniza tu repo: `git checkout main` -> `git pull upstream main`.

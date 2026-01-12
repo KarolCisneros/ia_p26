@@ -1,4 +1,4 @@
-:::homework{id="A.3.2" title="Crear cuenta de GitHub y solicitar Student Pack" due="2026-01-21" points="0"}
+:::homework{id="A.3.2" title="Crear cuenta de GitHub y solicitar Student Pack" due="2026-01-19" points="0"}
 
 Crea tu cuenta de GitHub y solicita el GitHub Student Developer Pack siguiendo esta guía. Esto es requisito para las siguientes secciones del curso.
 

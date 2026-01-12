@@ -1,7 +1,14 @@
-:::homework{id="A.6.1" title="Instalar Python 3" due="2026-01-26" points="0"}
+:::homework{id="A.6.0" title="Certificación & Lectura de seccion A.6 Python Básico" due="2026-01-28" points="20"}
 
-Instala Python 3 en tu sistema (dentro de WSL si usas Windows) y verifica con `python3 --version`.
+Completa el curso [Introduction to Python for Data Science](https://app.datacamp.com/learn/courses/intro-to-python-for-data-science). Despues de completar el curso lee la seccion completa de Python Básico.  
+La tarea solo contara como completada si se sube la evidencia de la certificacion y se lee la seccion completa de Python Básico.  
+El archivo para subirla esta en la carpeta [07_certificaciones](../07_certificaciones/python_intro.md)
+:::
 
+:::homework{id="A.6.1" title="Instalar Python 3" due="2026-01-28" points="0"}
+
+Instala Python 3 en tu sistema (dentro de WSL si usas Windows) y verifica con `python3 --version`.  
+Leer la seccion A.6 Python Básico completa.
 :::
 
 # Instalación de Python

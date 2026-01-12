@@ -1,5 +1,5 @@
-:::homework{id="A.4.1" title="Instalar Cursor" due="2026-01-21" points="0"}
-
+:::homework{id="A.4.1" title="Instalar Cursor" due="2026-01-19" points="0"}
+Leer seccion A.4 completa  
 Instala Cursor en tu sistema operativo y verifica que el comando `cursor .` funciona desde la terminal.
 
 :::

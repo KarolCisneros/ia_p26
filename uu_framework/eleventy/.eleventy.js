@@ -69,8 +69,11 @@ module.exports = function(eleventyConfig) {
   // Copy fonts
   eleventyConfig.addPassthroughCopy({ "../uu_framework/eleventy/src/fonts": "fonts" });
 
-  // Copy images from content
-  eleventyConfig.addPassthroughCopy("**/*.{png,jpg,jpeg,gif,svg,webp}");
+  // Copy images from content (explicitly from images directory only)
+  eleventyConfig.addPassthroughCopy("images/**/*.{png,jpg,jpeg,gif,svg,webp}");
+
+  // Ignore output directory to prevent scanning it
+  eleventyConfig.ignores.add("../_site/**");
 
   // ============================================
   // Filters

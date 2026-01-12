@@ -18,9 +18,11 @@ module.exports = {
     // Text colors
     'text-text', 'text-text-muted', 'text-accent', 'text-accent-secondary', 'text-bg',
     'text-accent-hover', 'text-homework', 'text-exercise', 'text-prompt', 'text-example', 'text-exam',
+    'text-calendar-class', 'text-calendar-holiday',
     // Borders
     'border-border', 'border-l-2', 'border-l-4',
     'border-homework', 'border-exercise', 'border-exam', 'border-project',
+    'border-calendar-class', 'border-calendar-holiday',
     // Hovers
     'hover:text-accent', 'hover:text-accent-hover', 'hover:text-text',
     'hover:bg-bg-secondary', 'hover:bg-bg-tertiary', 'hover:scale-110',
@@ -99,6 +101,10 @@ module.exports = {
         'example': 'var(--color-example)',
         'exam': 'var(--color-exam)',
         'project': 'var(--color-project)',
+        // Calendar colors
+        'calendar-class': 'var(--color-calendar-class)',
+        'calendar-holiday': 'var(--color-calendar-holiday)',
+        'calendar-shadow': 'var(--color-calendar-shadow)',
       },
       fontFamily: {
         'sans': ['var(--font-family-base)'],

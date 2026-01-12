@@ -1,4 +1,4 @@
-:::homework{id="A.4.5" title="Tarea: Primer proyecto con Cursor" due="2026-01-21" points="5"}
+:::homework{id="A.4.5" title="Tarea: Primer proyecto con Cursor" due="2026-01-19" points="5"}
 
 Crea una carpeta `test_ide`, usa Composer para generar `hola_ide.md` con una biografía ficticia, y renderiza el markdown.
 

@@ -41,6 +41,11 @@
   --color-exam: #ef233c;
   --color-project: #ffd60a;
 
+  /* Calendar colors */
+  --color-calendar-class: #00ff41;
+  --color-calendar-holiday: #ef233c;
+  --color-calendar-shadow: #000000;
+
   /* Status colors */
   --color-success: #00ff41;
   --color-warning: #ffd60a;

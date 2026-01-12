@@ -1,7 +1,7 @@
-:::homework{id="A.5.5" title="Tarea 01: Certificación GitHub + Entrega de evidencias" due="2026-01-26" points="30"}
+:::homework{id="A.5.5" title="Entrega de evidencias" due="2026-01-26" points="10"}
 
-Completa el curso [GitHub Concepts](https://app.datacamp.com/learn/courses/introduction-to-github-concepts) y sube las evidencias de AMBOS cursos (LLM de A.2.1 + GitHub) a tu carpeta personal mediante Pull Request.
-El curso vale 15 puntos, el pull request vale 15 puntos.
+Sube las evidencias de AMBOS cursos (LLM de A.2.1 + GitHub) a tu carpeta personal mediante Pull Request.
+El pull request vale 15 puntos, completar el curso vale 20 mencionado en [01_setup_ssh.md](./01_setup_ssh.md)
 
 :::
 
@@ -13,9 +13,9 @@ Este ejercicio es tu "examen de manejo" para el curso. Vamos a poner en práctic
 
 ---
 
-## Pre-requisitos: Prepara a tu Copiloto (LLM)
+## Pre-requisitos: Prepara(LLM)
 
-Antes de empezar, abre tu chat con ChatGPT, Claude o Gemini. Para que te ayuden correctamente, necesitan contexto.
+Antes de empezar, abre tu LLM (Cursor, ChatGPT, Claude, Gemini, etc). Para que te ayuden correctamente, necesitan contexto.
 
 > **Prompt Inicial para tu LLM:**
 > "Hola, estoy tomando un curso de programación. Estamos usando un flujo de trabajo específico con Git y GitHub.
@@ -160,3 +160,11 @@ Si Git te da errores rojos y feos:
     > "Estoy intentando hacer [lo que hacías]. Me salió este error:
     > [PEGAR ERROR]
     > ¿Cómo lo soluciono sin borrar mi carpeta personal? Recuerda que uso un flujo de Feature Branch."
+
+
+:::exam{id="EX-01" title="Segundo Parcial: Git y GitHub" date="2026-02-04" points="10" duration="20 minutos"}
+
+Va a curbir la parte de git y github, y como subir evidencia de certificaciones.  
+Es literalmente aprender el flujo de trabajo de git y github, que se debe hacer y que no se debe hacer. 
+
+:::

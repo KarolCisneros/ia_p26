@@ -1,7 +1,7 @@
-:::homework{id="A.2.1" title="Curso: AI Assisted Coding for Developers" due="2026-01-19" points="20"}
-
+:::homework{id="A.2.1" title="leer  A.2 LLMs & Curso: AI Assisted Coding for Developers" due="2026-01-14" points="20"}
+Leer toda la seccion A.2 LLMs, y despues completar el curso.  
 Completa el curso [AI Assisted Coding for Developers](https://app.datacamp.com/learn/courses/ai-assisted-coding-for-developers). La evidencia se sube después en A.5.5 (módulo Git).
-Solo se necesitan completar las primeras 2 unidades: 'Unlocking the Power of AI in Code' & 'Prompt Engineering for Real-World Coding Tasks'
+Solo se necesitan completar las primeras 2 unidades: 'Unlocking the Power of AI in Code' & 'Prompt Engineering for Real-World Coding Tasks'  
 :::
 
 # Large Language Models (LLMs)

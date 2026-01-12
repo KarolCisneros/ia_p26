@@ -88,6 +88,7 @@ def aggregate_all_tasks(
                     'date': attrs.get('date'),
                     'location': attrs.get('location'),
                     'duration': attrs.get('duration'),
+                    'points': attrs.get('points'),
                     'chapter': chapter,
                     'file': file_path,
                     'url': '/' + file_path.replace('.md', '/'),

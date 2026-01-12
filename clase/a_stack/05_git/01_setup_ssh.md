@@ -1,8 +1,15 @@
-:::homework{id="A.5.1" title="Configurar Git y SSH" due="2026-01-26" points="0"}
+:::homework{id="A.5.0" title="Curso de Certificado de Git & Lectura de seccion A.5 Git y GitHub" due="2026-01-26" points="20"}
+Completa el curso [GitHub Concepts](https://app.datacamp.com/learn/courses/introduction-to-github-concepts). El como subir la evidencia que cuenta como tarea (diferente) esta en el documento [05_task_certifications.md](./05_task_certifications.md)  
+Despues de completar el curso lee la seccion A.5 Git y GitHub completa.
 
+::: 
+
+
+:::homework{id="A.5.1" title="Git Configurar Git y SSH" due="2026-01-26" points="0"}
 Configura Git con tu nombre y email, genera llaves SSH y agrégalas a tu cuenta de GitHub. Verifica con `ssh -T git@github.com`.
 
 :::
+
 
 # Git y GitHub: Tu Pasaporte al Mundo del Software
 

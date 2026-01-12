@@ -117,10 +117,10 @@ layout: layouts/base.njk
 .class-topic {
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-calendar-class);
   margin-bottom: 0.25rem;
   padding: 0.125rem 0.25rem;
-  background: rgba(0, 255, 65, 0.1);
+  background: color-mix(in srgb, var(--color-calendar-class) 10%, transparent);
   border-radius: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
@@ -128,8 +128,8 @@ layout: layouts/base.njk
 }
 
 .class-topic.holiday {
-  color: var(--color-exam);
-  background: rgba(239, 35, 60, 0.1);
+  color: var(--color-calendar-holiday);
+  background: color-mix(in srgb, var(--color-calendar-holiday) 10%, transparent);
 }
 
 .event-dots {
@@ -185,7 +185,7 @@ layout: layouts/base.njk
 
 .task-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--color-calendar-shadow) 30%, transparent);
 }
 
 .task-card.homework {
@@ -210,17 +210,17 @@ layout: layouts/base.njk
 }
 
 .task-type-badge.homework {
-  background: rgba(255, 107, 53, 0.2);
+  background: color-mix(in srgb, var(--color-homework) 20%, transparent);
   color: var(--color-homework);
 }
 
 .task-type-badge.exam {
-  background: rgba(239, 35, 60, 0.2);
+  background: color-mix(in srgb, var(--color-exam) 20%, transparent);
   color: var(--color-exam);
 }
 
 .task-type-badge.project {
-  background: rgba(255, 214, 10, 0.2);
+  background: color-mix(in srgb, var(--color-project) 20%, transparent);
   color: var(--color-project);
 }
 
@@ -292,9 +292,11 @@ layout: layouts/base.njk
   function groupTasksByDate(tasks) {
     const grouped = {};
     tasks.forEach(task => {
-      if (!task.due) return;
-      if (!grouped[task.due]) grouped[task.due] = [];
-      grouped[task.due].push(task);
+      // Handle both homework (due) and exams (date)
+      const taskDate = task.due || task.date;
+      if (!taskDate) return;
+      if (!grouped[taskDate]) grouped[taskDate] = [];
+      grouped[taskDate].push(task);
     });
     return grouped;
   }
@@ -491,15 +493,17 @@ layout: layouts/base.njk
     };
 
     allTasks.forEach(task => {
-      if (!task.due) return;
+      // Handle both homework (due) and exams (date)
+      const taskDate = task.due || task.date;
+      if (!taskDate) return;
 
-      const dueDate = new Date(task.due + 'T00:00:00');
+      const dueDate = new Date(taskDate + 'T00:00:00');
 
       if (dueDate < today) {
         buckets.overdue.push(task);
-      } else if (task.due === todayStr) {
+      } else if (taskDate === todayStr) {
         buckets.today.push(task);
-      } else if (task.due === tomorrowStr) {
+      } else if (taskDate === tomorrowStr) {
         buckets.tomorrow.push(task);
       } else if (dueDate <= endOfThisWeek) {
         buckets.thisWeek.push(task);
@@ -564,10 +568,13 @@ layout: layouts/base.njk
 
     const meta = document.createElement('p');
     meta.className = 'text-sm text-text-muted mt-2';
+    const taskDate = task.due || task.date;
+    const dateLabel = task.type === 'exam' ? 'Fecha' : 'Vence';
+    const pointsText = task.points ? `<span>${task.points} puntos</span> • ` : '';
     meta.innerHTML = `
-      <span>${task.points || '0'} puntos</span> •
+      ${pointsText}
       <span>${task.chapter || 'General'}</span> •
-      <span>Vence: ${formatDate(task.due)}</span>
+      <span>${dateLabel}: ${formatDate(taskDate)}</span>
     `;
 
     const link = document.createElement('a');
@@ -598,17 +605,17 @@ layout: layouts/base.njk
       topicSection.className = 'mb-6 p-4 rounded-lg border-2';
 
       if (topic.is_holiday) {
-        topicSection.style.borderColor = 'var(--color-exam)';
-        topicSection.style.background = 'rgba(239, 35, 60, 0.05)';
+        topicSection.style.borderColor = 'var(--color-calendar-holiday)';
+        topicSection.style.background = 'color-mix(in srgb, var(--color-calendar-holiday) 5%, transparent)';
         topicSection.innerHTML = `
-          <div class="text-lg font-bold" style="color: var(--color-exam);">🌴 Día de asueto</div>
+          <div class="text-lg font-bold" style="color: var(--color-calendar-holiday);">🌴 Día de asueto</div>
           <div class="text-sm text-text-muted mt-1">No hay clase</div>
         `;
       } else {
-        topicSection.style.borderColor = 'var(--color-accent)';
-        topicSection.style.background = 'rgba(0, 255, 65, 0.05)';
+        topicSection.style.borderColor = 'var(--color-calendar-class)';
+        topicSection.style.background = 'color-mix(in srgb, var(--color-calendar-class) 5%, transparent)';
         topicSection.innerHTML = `
-          <div class="text-lg font-bold" style="color: var(--color-accent);">Clase ${topic.clase}</div>
+          <div class="text-lg font-bold" style="color: var(--color-calendar-class);">Clase ${topic.clase}</div>
           <div class="text-sm text-text mt-1">${topic.topic || 'Tema por definir'}</div>
         `;
       }
