@@ -72,8 +72,9 @@ module.exports = function(eleventyConfig) {
   // Copy images from content (explicitly from images directory only)
   eleventyConfig.addPassthroughCopy("images/**/*.{png,jpg,jpeg,gif,svg,webp}");
 
-  // Copy PDF files from content
-  eleventyConfig.addPassthroughCopy("**/*.pdf");
+  // Copy PDF files from specific directories (exclude b_libros which is gitignored)
+  eleventyConfig.addPassthroughCopy("0*/**/*.pdf");
+  eleventyConfig.addPassthroughCopy("a_stack/**/*.pdf");
 
   // Copy favicon files to site root
   eleventyConfig.addPassthroughCopy("*.ico");
