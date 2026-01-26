@@ -17,14 +17,12 @@ Esta es la plantilla que debes copiar a tu carpeta `estudiantes/tu_usuario/certi
 
 # Evidencia: AI Assisted Coding for Developers
 
-Nombre del Estudiante: [Tu Nombre Aquí]
-Fecha: [Fecha]
+Nombre del Estudiante: Regina Cabral Corres
+Fecha: 26/ener0/2026
 
 ## Prueba de Finalización
 
-```markdown
-![Evidencia LLM](./evidencia_llm.png)
-```
+![Certificado DataCamp](evidencia_llm.png)
 
 o enlace al certificado público:
-[Pegar Link Aquí]
+https://www.datacamp.com/completed/statement-of-accomplishment/course/9fe6a78ae569f2e1391b8a198394fd92072c290e
