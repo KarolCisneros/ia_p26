@@ -31,7 +31,7 @@ Es una buena forma de reforzar los conceptos mientras practicas programación.
 ---
 ---
 
-:::homework{id="5.10b" title="Ejercicios de Probabilidad" due="2026-02-04" points="20"}
+:::homework{id="5.10b" title="Ejercicios de Probabilidad" due="2026-02-04" points="10"}
 
 Ejercicios para reforzar conceptos de probabilidad, filosofía y álgebra booleana.
 Suvir tarea resulta a canvas
