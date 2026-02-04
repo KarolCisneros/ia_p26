@@ -1,42 +1,3 @@
-:::homework{id="5.10a" title="Curso DataCamp: Foundations of Probability" due="2026-02-04" points="20"}
-
-Completar el curso de DataCamp sobre fundamentos de probabilidad en Python. Subir evidencia a canvas
-
-:::
-
-# Tarea: Curso DataCamp — Foundations of Probability in Python
-
-## Información
-
-- **Fecha de entrega:** 4 de febrero de 2026
-- **Puntos:** 20
-- **Curso:** [Foundations of Probability in Python](https://app.datacamp.com/learn/courses/foundations-of-probability-in-python)
-
-## Instrucciones
-
-1. **Completar el curso** "Foundations of Probability in Python" en DataCamp
-2. **Entregar screenshot** del certificado de completación o de la pantalla que muestre 100% de progreso
-3. Subir a Canvas
-
-## ¿Por qué este curso?
-
-Este curso complementa lo que vimos en clase con práctica en código. Verás:
-- Cálculo de probabilidades con Python
-- Distribuciones de probabilidad (binomial, normal, etc.)
-- Simulaciones de Monte Carlo
-- Aplicaciones prácticas
-
-Es una buena forma de reforzar los conceptos mientras practicas programación.
-
----
----
-
-:::homework{id="5.10b" title="Ejercicios de Probabilidad" due="2026-02-04" points="10"}
-
-Ejercicios para reforzar conceptos de probabilidad, filosofía y álgebra booleana.
-Suvir tarea resulta a canvas
-:::
-
 # Tarea: Ejercicios de Probabilidad
 
 Esta tarea tiene como objetivo verificar y reforzar tu comprensión de los conceptos fundamentales de probabilidad que hemos visto en este módulo.
@@ -183,7 +144,6 @@ b) ¿Cuál es la probabilidad de que la segunda sea roja, dado que la primera fu
 
 ### Ejercicio 2.3 (2 puntos)
 
-**Respuesta:**
 
 Usando Bayes: $P(E|+) = \frac{P(+|E) \cdot P(E)}{P(+)}$
 
@@ -246,7 +206,6 @@ c) $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) = 4 + 9 = 13$
 
 ### Ejercicio 2.7 (1 punto)
 
-**Respuesta:**
 
 Partimos de $\text{Var}(X) = E[(X - \mu)^2]$ donde $\mu = E[X]$
 
@@ -291,7 +250,7 @@ c) $A + \bar{A}B = (A + \bar{A})(A + B) = 1 \cdot (A + B) = A + B$
 
 a) $\overline{A + B + C}$
 
-Aplicamos De Morgan en dos pasos:
+Aplicamos De Morgan:al´po{jefg}
 $\overline{A + B + C} = \overline{(A + B) + C}$
 $= \overline{(A + B)} \cdot \bar{C}$ (primera aplicación de De Morgan)
 $= (\bar{A} \cdot \bar{B}) \cdot \bar{C}$ (segunda aplicación de De Morgan)
@@ -299,7 +258,7 @@ $= \bar{A}\bar{B}\bar{C}$ ✓
 
 b) $\overline{ABC}$
 
-Aplicamos De Morgan en dos pasos:
+Aplicamos De Morgan:
 $\overline{ABC} = \overline{(AB) \cdot C}$
 $= \overline{AB} + \bar{C}$ (primera aplicación de De Morgan)
 $= (\bar{A} + \bar{B}) + \bar{C}$ (segunda aplicación de De Morgan)
