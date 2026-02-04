@@ -107,7 +107,7 @@ $$L(\theta) = \prod_{i=1}^n f(X_i | \theta)$$
 $$\ell(\theta) = \sum_{i=1}^n \log f(X_i | \theta)$$
 
 **Estimador de Máxima Verosimilitud (MLE):**
-$$\hat{\theta}_{MLE} = \arg\max_\theta L(\theta) = \arg\max_\theta \ell(\theta)$$
+$$\hat{\theta}\_{MLE} = \arg\max\_\theta L(\theta) = \arg\max\_\theta \ell(\theta)$$
 
 ### Ejemplo 1: MLE para Bernoulli
 

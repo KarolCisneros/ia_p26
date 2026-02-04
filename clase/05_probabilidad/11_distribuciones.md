@@ -167,7 +167,7 @@ $$f(x) = \frac{1}{\pi\gamma\left[1 + \left(\frac{x-x_0}{\gamma}\right)^2\right]}
 
 Interpolación entre Normal y Cauchy.
 
-$$X \sim t_\nu$$
+$$X \sim t\_\nu$$
 
 - $\nu = 1$: es Cauchy
 - $\nu \to \infty$: es Normal

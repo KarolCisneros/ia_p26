@@ -248,7 +248,7 @@ El **Value at Risk** (Valor en Riesgo) es LA medida estándar de riesgo financie
 
 **Definición:** El VaR al nivel de confianza $\alpha$ es la pérdida máxima que no se superará con probabilidad $\alpha$.
 
-$$\text{VaR}_\alpha = -\inf\{x : P(R \leq x) \geq 1-\alpha\}$$
+$$\text{VaR}\_\alpha = -\inf\{x : P(R \leq x) \geq 1-\alpha\}$$
 
 **En palabras simples:**
 - VaR₉₉ = "El 99% de los días, no perderemos más que esta cantidad"
@@ -262,9 +262,9 @@ $$R \sim \mathcal{N}(\mu, \sigma^2)$$
 
 El VaR se calcula como:
 
-$$\text{VaR}_\alpha = -(\mu + z_\alpha \cdot \sigma)$$
+$$\text{VaR}\_\alpha = -(\mu + z\_\alpha \cdot \sigma)$$
 
-donde $z_\alpha$ es el cuantil de la normal estándar:
+donde $z\_\alpha$ es el cuantil de la normal estándar:
 - Para VaR₉₉: $z_{0.01} \approx -2.33$
 - Para VaR₉₅: $z_{0.05} \approx -1.65$
 
@@ -315,7 +315,7 @@ El **Expected Shortfall** (también llamado CVaR o Tail VaR) responde:
 
 > "Cuando las cosas van mal, ¿qué tan mal van?"
 
-$$\text{ES}_\alpha = E[R | R < -\text{VaR}_\alpha]$$
+$$\text{ES}\_\alpha = E[R | R < -\text{VaR}\_\alpha]$$
 
 Es el promedio de las pérdidas en los peores $(1-\alpha)\%$ de casos.
 

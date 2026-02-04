@@ -14,7 +14,7 @@ El Value at Risk responde la pregunta:
 
 **Definición formal:** VaR al nivel de confianza α es el cuantil (1-α) de la distribución de pérdidas.
 
-$$\text{VaR}_\alpha = -Q_{1-\alpha}(\mathcal{R})$$
+$$\text{VaR}\_\alpha = -Q\_{1-\alpha}(\mathcal{R})$$
 
 donde $Q_p$ es el cuantil p de los retornos R.
 
@@ -30,7 +30,7 @@ $$R \sim \mathcal{N}(\mu, \sigma^2)$$
 
 Entonces:
 
-$$\text{VaR}_\alpha = -(\mu + z_{1-\alpha} \cdot \sigma)$$
+$$\text{VaR}\_\alpha = -(\mu + z\_{1-\alpha} \cdot \sigma)$$
 
 donde $z_{1-\alpha}$ es el cuantil de la normal estándar:
 - VaR₉₉: $z_{0.01} = -2.326$
@@ -104,7 +104,7 @@ Si el modelo subestima, el ratio será >> 1.
 
 ### Expected Shortfall (ES)
 
-$$\text{ES}_\alpha = E[\text{Pérdida} | \text{Pérdida} > \text{VaR}_\alpha]$$
+$$\text{ES}\_\alpha = E[\text{Pérdida} | \text{Pérdida} > \text{VaR}\_\alpha]$$
 
 "Cuando las cosas van mal, ¿qué tan mal van?"
 
