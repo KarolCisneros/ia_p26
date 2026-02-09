@@ -75,46 +75,187 @@ Esto hace que $H$ sea más que una “fórmula bonita”: es un **límite de com
 
 ---
 
-## Ejemplo acumulativo: “candidatas de palabra” como mensajes
+## Códigos prefijo como árboles (la idea mecánica)
 
-Volvamos a una fuente que produce “palabras candidatas” con un prior sesgado.
+Un código prefijo binario se puede ver como un **árbol binario**:
 
-Supón 4 símbolos:
+- Cada símbolo $x$ es una hoja.
+- Ir a la izquierda agrega un bit (por ejemplo, `0`).
+- Ir a la derecha agrega un bit (por ejemplo, `1`).
+- El código $c(x)$ es el camino desde la raíz a la hoja.
+
+Esto explica por qué “prefijo” importa:
+
+> Si ningún símbolo es prefijo de otro, entonces ninguna hoja es ancestro de otra hoja.  
+> Eso hace que decodificar sea “leer bits hasta caer en una hoja”.
+
+Una consecuencia útil (solo como intuición; no la probaremos aquí) es la **desigualdad de Kraft**: si un conjunto de longitudes $\{\ell(x)\}$ viene de un código prefijo, entonces
+
+$$
+\sum_x 2^{-\ell(x)} \le 1
+$$
+
+Esto te recuerda que “no puedes darle códigos cortísimos a todos”: hay un presupuesto de longitudes.
+
+---
+
+## ¿Cómo se construye el mejor código? Huffman (paso a paso)
+
+Huffman es un algoritmo greedy para construir un código prefijo que minimiza la longitud promedio:
+
+$$
+L=\sum_x p(x)\,\ell(x)
+$$
+
+### Intuición antes del algoritmo
+
+Si dos símbolos son muy raros, “no pasa mucho” si terminan con códigos largos.  
+La idea de Huffman es:
+
+> Junta los dos símbolos menos probables para que compartan un prefijo largo, y repite.
+
+### Pseudocódigo (versión clara)
+
+```text
+Entrada: símbolos S = {x1,...,xk} con pesos w(x) (probabilidades o frecuencias)
+Salida: árbol binario (y por tanto un código prefijo)
+
+1) Crea un nodo-hoja para cada símbolo x con peso w(x).
+2) Mete todos los nodos en una cola de prioridad (min-heap) por peso.
+3) Mientras haya más de un nodo en el heap:
+     a) u = extrae_min(heap)   # el peso más chico
+     b) v = extrae_min(heap)   # segundo más chico
+     c) crea un nodo padre p con hijos (u, v) y peso w(p)=w(u)+w(v)
+     d) inserta p al heap
+4) El nodo que queda es la raíz del árbol.
+5) Asigna bits a las ramas (por ejemplo: izquierda=0, derecha=1).
+6) El código de un símbolo es el camino raíz→hoja.
+```
+
+Detalles prácticos:
+
+- Si usas **frecuencias** en un dataset, puedes dividir entre el total y obtienes probabilidades; el árbol de Huffman es el mismo (solo escala).
+- Si hay empates, puedes romperlos arbitrariamente: pueden cambiar los bits exactos, pero la longitud promedio óptima no empeora.
+
+---
+
+## Ejemplo completo de Huffman (con números y cálculo de $L$)
+
+Supón una fuente con 6 símbolos:
 
 | símbolo | $p(x)$ |
 |---|---:|
-| $w_1$ | 0.50 |
-| $w_2$ | 0.25 |
-| $w_3$ | 0.15 |
-| $w_4$ | 0.10 |
+| $a$ | 0.30 |
+| $b$ | 0.25 |
+| $c$ | 0.20 |
+| $d$ | 0.15 |
+| $e$ | 0.06 |
+| $f$ | 0.04 |
 
-Un código prefijo posible (no necesariamente óptimo) es:
+### Paso 0: iniciar con hojas
 
-| símbolo | código | $\ell(x)$ |
-|---|---|---:|
-| $w_1$ | 0 | 1 |
-| $w_2$ | 10 | 2 |
-| $w_3$ | 110 | 3 |
-| $w_4$ | 111 | 3 |
+Cada símbolo es una hoja con su peso.
 
-Longitud promedio:
+### Paso 1: juntar los dos más raros
+
+Los dos más chicos son $f(0.04)$ y $e(0.06)$:
+
+- Merge: $(f,e)\rightarrow n_1$ con peso $0.10$
+
+Ahora los “nodos” son: $a(0.30)$, $b(0.25)$, $c(0.20)$, $d(0.15)$, $n_1(0.10)$.
+
+### Paso 2: repetir
+
+Los dos más chicos ahora son $n_1(0.10)$ y $d(0.15)$:
+
+- Merge: $(n_1,d)\rightarrow n_2$ con peso $0.25$
+
+Ahora tienes: $a(0.30)$, $b(0.25)$, $c(0.20)$, $n_2(0.25)$.
+
+### Paso 3: repetir
+
+Los dos más chicos: $c(0.20)$ y uno de los $0.25$ (por ejemplo $b(0.25)$):
+
+- Merge: $(c,b)\rightarrow n_3$ con peso $0.45$
+
+Quedan: $a(0.30)$, $n_2(0.25)$, $n_3(0.45)$.
+
+### Paso 4: repetir
+
+Los dos más chicos: $n_2(0.25)$ y $a(0.30)$:
+
+- Merge: $(n_2,a)\rightarrow n_4$ con peso $0.55$
+
+Quedan: $n_3(0.45)$, $n_4(0.55)$.
+
+### Paso 5: merge final (raíz)
+
+- Merge: $(n_3,n_4)\rightarrow \text{root}$ con peso $1.00$
+
+### Asignar bits y leer códigos
+
+Asigna (por ejemplo) `0` a la rama izquierda y `1` a la derecha.  
+Una asignación posible produce longitudes:
+
+- $a$: longitud 2
+- $b$: longitud 2
+- $c$: longitud 2
+- $d$: longitud 3
+- $e$: longitud 4
+- $f$: longitud 4
+
+Nota: puede que tus bits exactos cambien si rompes empates distinto, pero estas longitudes (y el costo promedio) se mantienen.
+
+### Calcular el costo promedio $L$
 
 $$
-L = 0.50\cdot 1 + 0.25\cdot 2 + 0.15\cdot 3 + 0.10\cdot 3
+\begin{aligned}
+L
+&= 0.30\cdot 2 + 0.25\cdot 2 + 0.20\cdot 2 + 0.15\cdot 3 + 0.06\cdot 4 + 0.04\cdot 4 \\
+&= 2.35 \text{ bits/símbolo}
+\end{aligned}
 $$
 
-Y puedes compararlo con $H(X)$ calculando:
+### Comparar con la entropía $H(X)$
 
 $$
-H(X)=\sum_i p(w_i)\log_2\frac{1}{p(w_i)}
+H(X)= -\sum_x p(x)\log_2 p(x) \approx 2.325 \text{ bits}
 $$
 
-La idea UX aquí, si lo enseñamos en clase, es ver ambas cosas lado a lado:
+Aquí se ve el mensaje de Shannon en acción:
 
-- **Entropía**: “bits inevitables”
-- **Longitud promedio**: “bits que tu diseño realmente paga”
+- $H(X)\approx 2.325$ es el “límite ideal”.
+- Huffman paga $L=2.35$, o sea una **redundancia** de $L-H \approx 0.025$ bits por símbolo.
 
-El laboratorio (`lab_informacion.py`) va a generar gráficas donde se vea cómo cambia $L$ cuando cambias el prior.
+---
+
+## ¿Por qué Huffman “tiene sentido”? (intuición sin prueba dura)
+
+Dos ideas que explican por qué el greedy funciona:
+
+- En un árbol prefijo, los símbolos con códigos más largos viven “más profundo”.
+- En un óptimo, los dos símbolos menos probables deben terminar como “hermanos” al fondo (comparten el prefijo más largo).  
+  Si no fuera así, podrías intercambiar hojas y bajar el costo promedio.
+
+Huffman formaliza esa intuición juntándolos primero, y repitiendo el mismo argumento recursivamente.
+
+---
+
+## Complejidad (qué tan caro es construirlo y usarlo)
+
+Sea $k$ el número de símbolos distintos.
+
+- Construcción con min-heap:
+  - Haces $k-1$ merges; cada merge hace 2 extracciones y 1 inserción en el heap.
+
+$$
+O((k-1)\log k)=O(k\log k)
+$$
+
+- Codificar mensajes: una vez construido el diccionario $x\mapsto c(x)$, codificar es $O(1)$ por símbolo (lookup).
+- Decodificar: es $O(\text{número de bits})$ recorriendo el árbol hasta hojas.
+
+Comentario honesto: Huffman es óptimo para “códigos de símbolos” con longitudes enteras. Si quieres acercarte aún más a $H$ (como “longitudes fraccionarias”), existen técnicas como codificación aritmética; la idea conceptual es la misma: pagar $\approx -\log_2 p(x)$.
 
 ---
 
@@ -125,7 +266,7 @@ Analogía:
 > Cada bit cuesta dinero/tiempo. Si algo ocurre mucho, quieres pagarlo barato.
 
 - **Qué captura bien**: el criterio de optimalidad promedio.
-- **Qué es incompleto**: no dice nada sobre *cómo* construir el código, ni sobre errores, ni sobre canales con ruido.
+- **Qué es incompleto**: no dice nada sobre *cómo* construir el árbol, ni sobre errores, ni sobre canales con ruido.
 
 ---
 
