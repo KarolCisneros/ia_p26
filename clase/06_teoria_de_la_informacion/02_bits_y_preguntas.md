@@ -58,9 +58,13 @@ Interpretación:
 
 Esto ya suena como “cantidad de información”: 12 bits para distinguir una palabra de entre 4096 opciones equiprobables.
 
-![Bits como preguntas: $\log_2(N)$]({{ '/06_teoria_de_la_informacion/images/log2_n_preguntas.png' | url }})
+![Bits como preguntas: $\log_2(N)$ (eje x lineal)]({{ '/06_teoria_de_la_informacion/images/log2_n_preguntas_linearx.png' | url }})
 
-*En el caso uniforme, el número ideal de preguntas sí/no crece como $\log_2(N)$. Por eso la unidad “bit” aparece de forma natural cuando tu mecanismo de distinción es binario.*
+*En eje x lineal se ve la idea correcta: $\log_2(N)$ **no** crece linealmente con $N$; crece lento. (Si graficas $N$ en eje log, la curva se ve casi recta; eso es un efecto de la escala, no de la función.)*
+
+![Bits como preguntas: $\log_2(N)$ (eje x log)]({{ '/06_teoria_de_la_informacion/images/log2_n_preguntas_logx.png' | url }})
+
+*Esta segunda versión existe solo para mostrar un punto de visualización: en eje log, $\log_2(N)$ se ve lineal porque $\log_2(N)$ es proporcional a $\log_{10}(N)$.*
 
 ---
 

@@ -86,22 +86,43 @@ def plot_log2_questions():
     """
     Visual: log2(N) as \"# de preguntas sí/no\" para N opciones equiprobables.
     """
+    # (A) Eje x lineal: se ve la curva logarítmica “real” en N
+    Ns_lin = np.arange(1, 4097)
+    ys_lin = np.log2(Ns_lin)
+
+    fig, ax = plt.subplots()
+    ax.plot(Ns_lin, ys_lin, color=COLORS["blue"], linewidth=2)
+    ax.set_title("Bits como preguntas: log2(N) vs N (eje x lineal)")
+    ax.set_xlabel("N (número de opciones equiprobables)")
+    ax.set_ylabel("log2(N)  (preguntas sí/no en el mejor caso)")
+    for N in [1, 2, 4, 8, 1024, 4096]:
+        ax.scatter([N], [math.log(N, 2)], color=COLORS["red"], s=25, zorder=3)
+        ax.annotate(f"N={N} → {math.log(N,2):.0f} bits", xy=(N, math.log(N, 2)),
+                    xytext=(8, 8), textcoords="offset points", fontsize=9)
+    _save(fig, "log2_n_preguntas_linearx.png")
+
+    # (B) Eje x log: la curva se ve casi recta (porque log2(N) es lineal en log(N))
     Ns = np.unique(np.round(np.logspace(0, 6, 250)).astype(int))
     ys = np.log2(Ns)
-
     fig, ax = plt.subplots()
     ax.plot(Ns, ys, color=COLORS["blue"], linewidth=2)
     ax.set_xscale("log")
-    ax.set_title("Bits como preguntas: log2(N) vs N (escala log en N)")
-    ax.set_xlabel("N (número de opciones equiprobables)")
-    ax.set_ylabel("log2(N)  (preguntas sí/no en el mejor caso)")
-
+    ax.set_title("Bits como preguntas: log2(N) vs N (eje x log)")
+    ax.set_xlabel("N (escala log)")
+    ax.set_ylabel("log2(N) (bits)")
     for N in [1, 2, 4, 8, 1024, 4096, 1_000_000]:
-        ax.scatter([N], [math.log(N, 2)], color=COLORS["red"], s=30, zorder=3)
+        ax.scatter([N], [math.log(N, 2)], color=COLORS["red"], s=25, zorder=3)
         ax.annotate(f"N={N}\n{math.log(N,2):.1f} bits", xy=(N, math.log(N, 2)),
                     xytext=(8, 8), textcoords="offset points", fontsize=9)
-
-    _save(fig, "log2_n_preguntas.png")
+    ax.annotate(
+        "En eje x log, log2(N) se ve lineal",
+        xy=(2000, math.log(2000, 2)),
+        xytext=(30, -25),
+        textcoords="offset points",
+        arrowprops=dict(arrowstyle="->", lw=0.8),
+        fontsize=9,
+    )
+    _save(fig, "log2_n_preguntas_logx.png")
 
 
 def plot_surprisal_vs_p_bits():
@@ -195,7 +216,7 @@ def plot_ideal_length_vs_prob():
 
 def plot_zipf_password_prior():
     """
-    Visual: Zipf-like prior over rank: p(r) ∝ 1/r^alpha (log-log).
+    Visual: Zipf-like prior over rank: p(r) ~ 1/r^alpha (log-log).
     """
     r = np.arange(1, 100_001)
     fig, ax = plt.subplots()
@@ -203,7 +224,8 @@ def plot_zipf_password_prior():
         w = 1.0 / (r ** alpha)
         p = w / w.sum()
         ax.loglog(r, p, label=f"alpha={alpha}", linewidth=2, color=color)
-    ax.set_title("Prior Zipf (passwords): p(rank) ∝ 1/r^alpha")
+    # Avoid special glyphs (font portability in CI/servers)
+    ax.set_title("Prior Zipf (passwords): p(rank) ~ 1/r^alpha")
     ax.set_xlabel("rank (1=más común)")
     ax.set_ylabel("probabilidad (escala log-log)")
     ax.legend()
