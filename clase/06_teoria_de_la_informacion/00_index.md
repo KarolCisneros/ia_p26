@@ -2,6 +2,13 @@
 title: "Teoría de la Información: Bits, Entropía y Aprendizaje"
 ---
 
+
+
+:::exam{id="EX-03" title="Segundo parcial: Probabilidad" date="2026-02-11" points="10" duration="20 minutos"}
+Examen de probabilidad, estadistica y fat-tails. Se preguntara acerta de probabilidad, estadistica y fat-tails.
+:::
+
+
 # Teoría de la Información: Bits, Entropía y Aprendizaje
 
 ¿Qué significa **“información”** cuando queremos razonar, comunicar, aprender y (sí) *adivinar una palabra* o *crackear una contraseña*?
