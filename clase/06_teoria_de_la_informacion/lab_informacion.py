@@ -79,6 +79,21 @@ def plot_entropy_two_outcomes():
     ax.axvline(0.5, color=COLORS["gray"], linestyle="--", linewidth=1)
     ax.annotate("Máximo en p=0.5", xy=(0.5, 1.0), xytext=(0.62, 0.85),
                 arrowprops=dict(arrowstyle="->"))
+
+    # Escenarios típicos para fijar intuición (no solo la forma de la curva)
+    for p in [0.5, 0.9, 0.99, 0.1, 0.01]:
+        h = entropy_bits([p, 1 - p])
+        ax.scatter([p], [h], color=COLORS["red"], s=28, zorder=3)
+        ax.annotate(
+            f"p={p}\nH={h:.3f}",
+            xy=(p, h),
+            xytext=(10, -18),
+            textcoords="offset points",
+            fontsize=9,
+            arrowprops=dict(arrowstyle="->", lw=0.8, alpha=0.8),
+        )
+
+    ax.set_ylim(0, 1.05)
     _save(fig, "entropia_bernoulli.png")
 
 

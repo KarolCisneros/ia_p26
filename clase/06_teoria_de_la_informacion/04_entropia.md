@@ -95,6 +95,27 @@ Interpretación:
 
 Esto conecta perfectamente con “bits como preguntas” de la sección 2.
 
+### Caso más simple: dos resultados (entropía binaria)
+
+Si solo hay dos resultados posibles (por ejemplo $X\in\{0,1\}$), basta un parámetro:
+
+- $p = P(X=1)$
+- $1-p = P(X=0)$
+
+La entropía se vuelve una función de una sola variable:
+
+$$
+H(p) = -p\log_2(p) - (1-p)\log_2(1-p)
+$$
+
+![Entropía binaria: $H(p)$]({{ '/06_teoria_de_la_informacion/images/entropia_bernoulli.png' | url }})
+
+Lectura (esta gráfica vale oro para intuición):
+
+- Cuando $p=0.5$, hay máxima incertidumbre (dos resultados igual de plausibles) y $H(p)=1$ bit.
+- Cuando $p\to 0$ o $p\to 1$, casi “ya sabes” lo que va a pasar y $H(p)\to 0$.
+- Los puntos anotados (p=0.9, 0.99, etc.) son “escenarios”: cuantifican cuánta incertidumbre queda con un prior muy sesgado.
+
 ---
 
 ## Propiedad clave 2: concentración reduce entropía
