@@ -186,7 +186,137 @@ Jaynes propone un principio para elegir $p(x\mid I)$ cuando solo conoces ciertas
 
 > Elige la distribución que **maximiza** $H(X\mid I)$ sujeta a las restricciones, para no introducir suposiciones extra.
 
-En este módulo no vamos a desarrollar todo el método, pero sí vamos a usar su filosofía: **siempre declarar qué sabes** y qué estás asumiendo.
+En este módulo no vamos a desarrollar todo el método general, pero sí vamos a usar su filosofía (y ver un ejemplo): **siempre declarar qué sabes** y qué estás asumiendo.
+
+### Ejemplo práctico (paso a paso): derivar máxima entropía con una restricción
+
+La frase “maximiza entropía sujeto a restricciones” suena abstracta… hasta que haces uno.
+
+#### El problema (bien planteado)
+
+Imagina que $X$ solo puede tomar tres valores:
+
+$$
+X \in \{0,1,2\}
+$$
+
+Piensa en esto como “bajo / medio / alto”, o “0 errores / 1 error / 2 errores”, etc.  
+Tú no sabes cuál ocurrirá, pero sí sabes algo agregado:
+
+- Restricción 1 (normalización): $p_0 + p_1 + p_2 = 1$  
+- Restricción 2 (promedio conocido): $\mathbb{E}[X]=\mu$, es decir
+
+$$
+0\cdot p_0 + 1\cdot p_1 + 2\cdot p_2 = \mu
+$$
+
+La pregunta “Jaynes” es:
+
+> Entre todas las distribuciones $(p_0,p_1,p_2)$ que cumplen esas dos restricciones, ¿cuál tiene máxima entropía?
+
+#### Paso 1: escribir qué maximizas (entropía)
+
+En bits:
+
+$$
+H(p) = -\sum_{i=0}^2 p_i \log_2 p_i
+$$
+
+Truco técnico: es más cómodo derivar con log natural. Como $\log_2 p = \frac{\ln p}{\ln 2}$, maximizar $H$ en bits es equivalente a maximizar
+
+$$
+-\sum_{i=0}^2 p_i \ln p_i
+$$
+
+(solo cambia por el factor constante $1/\ln 2$).
+
+#### Paso 2: armar el Lagrangiano con las restricciones
+
+$$
+\mathcal{L}(p,\alpha,\beta)
+=
+-\sum_{i=0}^2 p_i \ln p_i
+ + \alpha\left(\sum_{i=0}^2 p_i - 1\right)
+ + \beta\left(\sum_{i=0}^2 i\,p_i - \mu\right)
+$$
+
+donde $\alpha$ y $\beta$ son multiplicadores de Lagrange.
+
+#### Paso 3: derivar y resolver la forma de $p_i$
+
+Derivamos respecto a cada $p_i$ y lo igualamos a cero:
+
+$$
+\frac{\partial \mathcal{L}}{\partial p_i}
+=
+-(\ln p_i + 1) + \alpha + \beta i
+=0
+$$
+
+Reacomodamos:
+
+$$
+\ln p_i = (\alpha-1) + \beta i
+$$
+
+Exponentiamos:
+
+$$
+p_i = \exp(\alpha-1)\,\exp(\beta i)
+$$
+
+Esto ya te deja una idea importante:
+
+> Con restricción de “promedio”, la máxima entropía cae en una familia exponencial.
+
+Para que se vea como “decaimiento”, define $\lambda=-\beta$ y una constante de normalización $Z$:
+
+$$
+p_i = \frac{e^{-\lambda i}}{Z}
+\quad\text{con}\quad
+Z=\sum_{j=0}^2 e^{-\lambda j}= 1 + e^{-\lambda} + e^{-2\lambda}
+$$
+
+En concreto:
+
+$$
+p_0=\frac{1}{Z},\quad
+p_1=\frac{e^{-\lambda}}{Z},\quad
+p_2=\frac{e^{-2\lambda}}{Z}
+$$
+
+#### Paso 4: usar el promedio para fijar $\lambda$
+
+La restricción $\mathbb{E}[X]=\mu$ se vuelve una ecuación de 1 variable:
+
+$$
+\mu
+= 0\cdot p_0 + 1\cdot p_1 + 2\cdot p_2
+= \frac{e^{-\lambda} + 2e^{-2\lambda}}{1+e^{-\lambda}+e^{-2\lambda}}
+$$
+
+Esa ecuación determina $\lambda$.
+
+#### Caso base (sin sesgo extra): $\mu=1$
+
+Si $\mu=1$, la solución es $\lambda=0$. Entonces $e^{-\lambda}=1$ y
+
+$$
+p_0=p_1=p_2=\frac{1}{3}
+$$
+
+Tiene sentido: con solo “el promedio es 1” y un soporte simétrico $\{0,1,2\}$, lo menos comprometido es la uniforme.
+
+#### Leve modificación: cambia el promedio a $\mu=1.2$
+
+Ahora aprendes un poquito más: el promedio no es 1 sino $\mu=1.2$.
+
+Sin re-derivar nada, la forma sigue siendo $p_i \propto e^{-\lambda i}$; solo cambia $\lambda$ para cumplir el nuevo promedio. En este caso:
+
+- $\lambda \approx -0.305$
+- $(p_0,p_1,p_2)\approx(0.238,\;0.323,\;0.438)$
+
+Lectura: como $\mu$ sube, la distribución de máxima entropía “se inclina” hacia $2$, pero de la forma más suave posible compatible con lo que sabes.
 
 ---
 
