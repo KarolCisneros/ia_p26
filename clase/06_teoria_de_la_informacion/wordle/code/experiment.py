@@ -9,7 +9,7 @@ import random
 import sys
 from pathlib import Path
 
-from lexicon import load_words
+from lexicon import load_lexicon
 from strategy import Strategy
 from strategies import discover_strategies
 from wordle_env import WordleEnv, feedback, filter_candidates
@@ -18,7 +18,6 @@ RESULTS_DIR = Path(__file__).resolve().parent / "results"
 
 
 def _entropy_bits(n: int) -> float:
-    """Entropy of a uniform distribution over *n* items (bits)."""
     return math.log2(n) if n > 1 else 0.0
 
 
@@ -98,7 +97,7 @@ def run_experiment(
 
         if verbose:
             status = "SOLVED" if env.is_solved() else "FAILED"
-            print(f"  → {status} in {len(env.history)} guesses")
+            print(f"  -> {status} in {len(env.history)} guesses")
 
     return logs
 
@@ -154,16 +153,15 @@ def main() -> None:
     parser.add_argument("--max-guesses", type=int, default=6, help="Max guesses per game")
     parser.add_argument("--num-games", type=int, default=10, help="Number of games")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--mode", choices=["uniform", "frequency"], default="uniform",
+                        help="Probability mode (default: uniform)")
     parser.add_argument("--allow-non-words", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="Print per-game details")
     parser.add_argument("--plot", type=str, default=None, help="Save plot to this path")
     args = parser.parse_args()
 
-    vocab = load_words(path=args.words, word_length=args.length)
-    if not vocab:
-        print(f"No words of length {args.length} found.", file=sys.stderr)
-        sys.exit(1)
-    print(f"Vocabulary: {len(vocab)} words of length {args.length}")
+    lex = load_lexicon(path=args.words, word_length=args.length, mode=args.mode)
+    print(f"Vocabulary: {len(lex.words)} words of length {args.length} (mode: {lex.mode})")
 
     cls = _find_strategy(args.strategy)
     strat = cls()
@@ -171,7 +169,7 @@ def main() -> None:
 
     logs = run_experiment(
         strat=strat,
-        vocabulary=vocab,
+        vocabulary=lex.words,
         word_length=args.length,
         max_guesses=args.max_guesses,
         num_games=args.num_games,
