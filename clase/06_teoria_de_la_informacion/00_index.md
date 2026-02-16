@@ -8,7 +8,10 @@ title: "Teoría de la Información: Bits, Entropía y Aprendizaje"
 Examen de probabilidad, estadistica y fat-tails. Se preguntara acerta de probabilidad, estadistica y fat-tails.
 :::
 
+:::exam{id="EX-04" title="Parcial de Teoria de la Informacion" date="2026-03-02" points="10" duration="20 minutos"}
 
+Examen sobre teoria de la inforamcion, incluyendo bits, entropia (interpretacion y propiedades), algoritmo de Huffman, y filosofia. Todo lo que hemos visto en el modulo en clase (no lo que no vimos)
+:::
 # Teoría de la Información: Bits, Entropía y Aprendizaje
 
 ¿Qué significa **“información”** cuando queremos razonar, comunicar, aprender y (sí) *adivinar una palabra* o *crackear una contraseña*?

@@ -1,7 +1,9 @@
 ---
 title: "Optimización"
 ---
-
+:::exam{id="EX-05" title="Parcial de Optimizacion" date="2026-02-23" points="10" duration="20 minutos"}
+Examen sobre optimizacion, incluyendo formulacion, paisaje, algoritmos, y ejemplos de python. Todo lo que hemos visto en el modulo en clase. Incluyendo la tarea.
+:::
 # Optimización
 
 En IA, casi todo se reduce a optimizar: minimizar una pérdida, maximizar una utilidad, encontrar los mejores parámetros. Entrenar una red neuronal es resolver un problema de optimización. Ajustar una regresión es resolver un problema de optimización. Incluso elegir la mejor jugada en un juego puede verse como optimización.
