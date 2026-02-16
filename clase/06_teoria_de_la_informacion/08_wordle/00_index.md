@@ -5,7 +5,7 @@ title: "Proyecto Wordle: Teoría de la Información en Acción"
 # Proyecto Wordle: Teoría de la Información en Acción
 
 :::project{id="PROJ-WORDLE" title="Proyecto Wordle" due="TBD" points="TBD"}
-Diseña, implementa y compara estrategias de Wordle usando herramientas de teoría de la información (entropía, ganancia de información, score esperado). Trabaja con el [código esqueleto](code/README.md) y participa en el torneo del curso.
+Diseña, implementa y compara estrategias de Wordle usando herramientas de teoría de la información (entropía, ganancia de información, score esperado). Trabaja en el [repositorio del torneo](https://github.com/sonder-art/rtorneo_wordle_p26) y participa en el torneo del curso.
 :::
 
 ## Contenido
@@ -21,20 +21,40 @@ Diseña, implementa y compara estrategias de Wordle usando herramientas de teor�
 | W.7 | [Look-ahead](07_look_ahead.md) | Mirar dos pasos al futuro (3B1B S4) |
 | W.8 | [Preguntas abiertas](08_preguntas_abiertas.md) | Direcciones creativas y extensiones |
 
-## Código esqueleto
+## Repositorio del torneo
 
-El directorio [`code/`](code/README.md) contiene un esqueleto auto-contenido con:
+Todo el código del proyecto vive en un repositorio separado:
 
-- Entorno de juego (`WordleEnv`) que soporta cualquier longitud de palabra
-- Clase base `Strategy` para implementar estrategias
-- Torneo automático que descubre y compara todas las estrategias
-- Dos estrategias de ejemplo (aleatoria y máxima probabilidad)
+**[github.com/sonder-art/rtorneo_wordle_p26](https://github.com/sonder-art/rtorneo_wordle_p26)**
+
+El repositorio contiene:
+
+- Motor del juego (`WordleEnv`) que soporta palabras de 4, 5 y 6 letras
+- Clase base `Strategy` con `GameConfig` para implementar estrategias
+- Torneo automático paralelo con scoring Borda Count sobre 6 rondas
+- Tres benchmarks incluidos: Random, MaxProb, Entropy
+- Dashboard web para visualizar resultados
+- Corpus de palabras en español (uniform y frequency)
+
+### Setup rápido
 
 ```bash
-cd code
+git clone git@github.com:sonder-art/rtorneo_wordle_p26.git
+cd rtorneo_wordle_p26
 pip install -r requirements.txt
-python tournament.py
+python3 run_all.py
 ```
+
+### Formato del torneo
+
+Tu estrategia compite en **6 rondas**: palabras de {4, 5, 6} letras en modos {uniform, frequency}. Se rankean por promedio de intentos usando **Borda Count**. Ver [reglas completas](https://github.com/sonder-art/rtorneo_wordle_p26/blob/main/docs/rules.md) y [guía de equipo](https://github.com/sonder-art/rtorneo_wordle_p26/blob/main/docs/team_guide.md).
+
+### Entrega
+
+1. Copia el template: `cp -r estudiantes/_template estudiantes/mi_equipo`
+2. Edita `estudiantes/mi_equipo/strategy.py` — **único archivo evaluado**
+3. Prueba: `python3 experiment.py --strategy "MiEstrategia_mi_equipo" --verbose`
+4. Abre un PR en el repositorio del torneo
 
 ## Referencia
 

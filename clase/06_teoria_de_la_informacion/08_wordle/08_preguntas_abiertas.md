@@ -27,7 +27,7 @@ Preguntas de diseño:
 - ¿Cuándo es mejor una "sonda" no-palabra que el mejor guess real?
 - ¿Cuántas sondas vale la pena hacer antes de empezar a adivinar?
 
-El código esqueleto soporta esto con `allow_non_words=True`.
+El framework del torneo soporta esto con `config.allow_non_words=True` (ver [repositorio del torneo](https://github.com/sonder-art/rtorneo_wordle_p26)).
 
 ## 3. Look-ahead más profundo
 
