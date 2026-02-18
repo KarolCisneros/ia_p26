@@ -19,6 +19,13 @@ Este módulo presenta un marco de **5 dimensiones ortogonales** para categorizar
 | 8.5 | [Atlas de métodos](05_atlas_de_metodos.md) | Matrices de métodos: supervisados, no supervisados, self-supervised, temporales, IA generativa |
 | 8.6 | [Mapa y heurísticas](06_mapa_y_heuristicas.md) | Mapa visual, heurísticas de elección, 8 casos de estudio, reflexión final |
 
+## Cómo correr el lab (para imágenes)
+
+```bash
+cd clase/08_prediccion
+python lab_prediccion.py
+```
+
 ## Objetivos de aprendizaje
 
 Al terminar este módulo podrás:

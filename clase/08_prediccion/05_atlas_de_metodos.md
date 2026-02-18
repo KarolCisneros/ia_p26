@@ -6,6 +6,8 @@ title: "Atlas de Métodos de Predicción"
 
 Con las cinco dimensiones en mano, podemos ubicar cualquier método concreto como un punto en este espacio. Lo que sigue es un atlas de los métodos más comunes — no exhaustivo, pero sí representativo. Cada método concreto es un punto en el espacio 5D. Las tablas siguientes ubican los métodos más comunes — no como una lista para memorizar, sino como un mapa para orientarse.
 
+![Mapa conceptual de métodos](images/08_metodos_5d_mapa.png)
+
 ## Métodos Supervisados (con Y)
 
 En aprendizaje supervisado tenemos pares **(X, Y)** y queremos aprender la relación entre ellos. La mayoría de estos métodos son **inductivos** (aprenden de datos) y **frecuentistas** (optimizan una función de pérdida). Las diferencias principales están en:
@@ -133,7 +135,7 @@ flowchart LR
 flowchart LR
     subgraph DIFF ["DIFFUSION (Stable Diffusion, DALL-E)"]
         direction LR
-        NOISE["Ruido puro"] -->|"Quitar ruido<br/>paso a paso"| IMG["Imagen generada"]
+        NOISE["Ruido puro"] -->|"Quitar ruido paso a paso"| IMG["Imagen generada"]
         TEXT["'un gato astronauta'"] -->|condiciona| IMG
     end
 ```

@@ -14,61 +14,61 @@ Saber que existen cinco dimensiones es útil. El siguiente diagrama muestra cóm
 flowchart TD
     START(["PROBLEMA DE PREDICCIÓN"]) --> Q1
 
-    Q1{"<b>D1: FUENTE DE CONOCIMIENTO</b><br/>¿De dónde viene la estructura?"}
+    Q1{"D1: FUENTE DE CONOCIMIENTO - ¿De dónde viene la estructura?"}
 
-    Q1 -->|"Teoría completa<br/>(física, economía)"| D1_DED["<b>DEDUCTIVO</b><br/>Ecuaciones teóricas"]
-    Q1 -->|"Teoría + datos<br/>(calibración)"| D1_HIB["<b>HÍBRIDO</b><br/>Estructura teórica, parámetros de datos"]
-    Q1 -->|"Solo datos<br/>(ML clásico)"| D1_IND["<b>INDUCTIVO</b><br/>Todo se aprende"]
+    Q1 -->|"Teoría completa (física, economía)"| D1_DED["DEDUCTIVO - Ecuaciones teóricas"]
+    Q1 -->|"Teoría + datos (calibración)"| D1_HIB["HÍBRIDO - Estructura teórica, parámetros de datos"]
+    Q1 -->|"Solo datos (ML clásico)"| D1_IND["INDUCTIVO - Todo se aprende"]
 
     D1_DED --> Q2
     D1_HIB --> Q2
     D1_IND --> Q2
 
-    Q2{"<b>D2: INTERPRETACIÓN PROBABILÍSTICA</b><br/>¿Cómo tratas la incertidumbre?"}
+    Q2{"D2: INTERPRETACIÓN PROBABILÍSTICA - ¿Cómo tratas la incertidumbre?"}
 
-    Q2 -->|"Actualizar creencias<br/>con datos"| D2_BAY["<b>BAYESIANO</b><br/><b>P(θ|datos)</b>"]
-    Q2 -->|"Frecuencias<br/>límite"| D2_FRQ["<b>FREQUENTIST</b><br/><b>MLE</b>, intervalos"]
+    Q2 -->|"Actualizar creencias con datos"| D2_BAY["BAYESIANO - P(θ|datos)"]
+    Q2 -->|"Frecuencias límite"| D2_FRQ["FREQUENTIST - MLE, intervalos"]
 
     D2_BAY --> Q3
     D2_FRQ --> Q3
 
-    Q3{"<b>D3: OBJETIVO MATEMÁTICO</b><br/>¿Tienes variable objetivo Y?"}
+    Q3{"D3: OBJETIVO MATEMÁTICO - ¿Tienes variable objetivo Y?"}
 
     Q3 -->|"Sí, supervisado"| Q4
     Q3 -->|"No, unsupervised"| Q4B
 
     Q4{"¿Qué estadístico de Y necesitas?"}
 
-    Q4 -->|"<b>Media</b>"| D3_EY["<b>E[Y|X]</b><br/>Predicción puntual"]
-    Q4 -->|"<b>Distribución</b>"| D3_PY["<b>P(Y|X)</b><br/>Incertidumbre total"]
-    Q4 -->|"<b>Percentiles</b>"| D3_Q["<b>Qα[Y|X]</b><br/>VaR, intervalos"]
-    Q4 -->|"<b>Intervención</b>"| D3_DO["<b>P(Y|do(X))</b><br/>Causalidad"]
+    Q4 -->|"Media"| D3_EY["E[Y|X] - Predicción puntual"]
+    Q4 -->|"Distribución"| D3_PY["P(Y|X) - Incertidumbre total"]
+    Q4 -->|"Percentiles"| D3_Q["Qα[Y|X] - VaR e intervalos"]
+    Q4 -->|"Intervención"| D3_DO["P(Y|do(X)) - Causalidad"]
 
     Q4B{"¿Qué quieres de X?"}
 
-    Q4B -->|"<b>Densidad</b>"| D3_PX["<b>P(X)</b><br/>Anomalías, generación"]
-    Q4B -->|"<b>Compresión</b>"| D3_PHI["<b>ϕ(X)</b><br/>Embeddings"]
-    Q4B -->|"<b>Clusters</b>"| D3_C["<b>P(C|X)</b><br/>Segmentación"]
+    Q4B -->|"Densidad"| D3_PX["P(X) - Anomalías y generación"]
+    Q4B -->|"Compresión"| D3_PHI["ϕ(X) - Embeddings"]
+    Q4B -->|"Clusters"| D3_C["P(C|X) - Segmentación"]
 
     D3_EY --> Q5
     D3_PY --> Q5
     D3_Q --> Q5
-    D3_DO --> D4_CAUS["<b>CAUSAL</b><br/><b>DAG</b> con <b>do()</b>"]
+    D3_DO --> D4_CAUS["CAUSAL - DAG con do()"]
     D3_PX --> Q5B
     D3_PHI --> Q5B
     D3_C --> Q5B
 
-    Q5{"<b>D4: ARQUITECTURA</b><br/>¿Estructura entre variables?"}
+    Q5{"D4: ARQUITECTURA - ¿Estructura entre variables?"}
 
-    Q5 -->|"Features intercambiables"| D4_FLAT["<b>FLAT</b><br/><b>X → f(θ) → Y</b>"]
-    Q5 -->|"Dependencias explícitas"| D4_GRAF["<b>PGM</b><br/><b>DAG</b>, <b>MRF</b>, <b>HMM</b>"]
-    Q5 -->|"Variable oculta L"| D4_LAT["<b>LATENTE</b><br/><b>L → X, Y</b>"]
+    Q5 -->|"Features intercambiables"| D4_FLAT["FLAT - X → f(θ) → Y"]
+    Q5 -->|"Dependencias explícitas"| D4_GRAF["PGM - DAG, MRF, HMM"]
+    Q5 -->|"Variable oculta L"| D4_LAT["LATENTE - L → X, Y"]
 
     Q5B{"¿Estructura en datos?"}
 
-    Q5B -->|"Ninguna especial"| D4B_FLAT["<b>FLAT</b>"]
-    Q5B -->|"Manifold/Embedding"| D4B_LAT["<b>LATENTE</b><br/><b>P(X|L)</b>, VAE"]
-    Q5B -->|"Mezcla de distribuciones"| D4B_GEN["<b>GENERATIVA</b><br/><b>P(X)</b>, Gaussian Mixture"]
+    Q5B -->|"Ninguna especial"| D4B_FLAT["FLAT"]
+    Q5B -->|"Manifold/Embedding"| D4B_LAT["LATENTE - P(X|L), VAE"]
+    Q5B -->|"Mezcla de distribuciones"| D4B_GEN["GENERATIVA - P(X), Gaussian Mixture"]
 
     D4_FLAT --> Q6
     D4_GRAF --> Q6
@@ -78,14 +78,14 @@ flowchart TD
     D4B_LAT --> Q6
     D4B_GEN --> Q6
 
-    Q6{"<b>D5: SUPUESTO INDUCTIVO</b><br/>¿Qué estructura asumes?"}
+    Q6{"D5: SUPUESTO INDUCTIVO - ¿Qué estructura asumes?"}
 
-    Q6 -->|"Simetría/Invarianza"| D5_ARQ["<b>ARQUITECTURA</b><br/><b>CNN</b>, <b>Transformer</b>"]
-    Q6 -->|"Penalizar complejidad"| D5_PEN["<b>REGULARIZACIÓN</b><br/><b>L1</b>, <b>L2</b>, Dropout"]
-    Q6 -->|"Creencia previa"| D5_PRI["<b>PRIOR</b><br/><b>P(θ)</b>"]
-    Q6 -->|"Match de momentos"| D5_CAL["<b>CALIBRACIÓN</b><br/><b>E[g(X,θ)]=0</b>"]
-    Q6 -->|"Performance en holdout"| D5_CV["<b>VALIDACIÓN</b><br/>CV, train/test"]
-    Q6 -->|"Independencia temporal"| D5_MRK["<b>MARKOV</b><br/><b>P(Xₜ₊₁|Xₜ)</b>"]
+    Q6 -->|"Simetría/Invarianza"| D5_ARQ["ARQUITECTURA - CNN, Transformer"]
+    Q6 -->|"Penalizar complejidad"| D5_PEN["REGULARIZACIÓN - L1, L2, Dropout"]
+    Q6 -->|"Creencia previa"| D5_PRI["PRIOR - P(θ)"]
+    Q6 -->|"Match de momentos"| D5_CAL["CALIBRACIÓN - E[g(X,θ)]=0"]
+    Q6 -->|"Performance en holdout"| D5_CV["VALIDACIÓN - CV, train/test"]
+    Q6 -->|"Independencia temporal"| D5_MRK["MARKOV - P(Xₜ₊₁|Xₜ)"]
 ```
 
 ### Combinaciones comunes

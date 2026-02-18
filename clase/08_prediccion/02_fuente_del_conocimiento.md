@@ -38,6 +38,8 @@ Hay dos caminos para saber algo del mundo. El primero dice: *pienso, luego predi
 
 ---
 
+![Deductivo vs Inductivo](images/03_deductivo_vs_inductivo.png)
+
 ### Enfoque Deductivo: "La teoría primero"
 
 En el enfoque deductivo, **la estructura del modelo existe antes de ver cualquier dato**. Viene de:
@@ -148,7 +150,7 @@ flowchart TD
         T1["Hogares maximizan utilidad"]
         T2["Firmas maximizan ganancias"]
         T3["Mercados se equilibran"]
-        T1 --> EC["Ecuaciones estructurales<br/>(Euler, Phillips, etc.)"]
+        T1 --> EC["Ecuaciones estructurales (Euler, Phillips, etc.)"]
         T2 --> EC
         T3 --> EC
     end
@@ -157,14 +159,14 @@ flowchart TD
         D1["Series de tiempo del PIB"]
         D2["Inflación observada"]
         D3["Tasas de interés"]
-        D1 --> MOM["Momentos empíricos<br/>(media, varianza, corr)"]
+        D1 --> MOM["Momentos empíricos (media, varianza, corr)"]
         D2 --> MOM
         D3 --> MOM
     end
 
-    EC --> CAL["<b>CALIBRACIÓN</b><br/>Encontrar θ tal que momentos<br/>del modelo ≈ momentos de los datos"]
+    EC --> CAL["CALIBRACIÓN: encontrar θ tal que momentos del modelo ≈ momentos de los datos"]
     MOM --> CAL
-    CAL --> RESULT["Modelo calibrado<br/>(estructura teórica + parámetros empíricos)"]
+    CAL --> RESULT["Modelo calibrado (estructura teórica + parámetros empíricos)"]
 ```
 
 La teoría te dice *qué* variables se relacionan y *cómo* (funcionalmente). Los datos te dicen los *valores numéricos* de los parámetros.

@@ -80,6 +80,10 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("03_*/images/**");
   eleventyConfig.addPassthroughCopy("04_*/images/**");
   eleventyConfig.addPassthroughCopy("05_*/images/**");
+  eleventyConfig.addPassthroughCopy("06_*/images/**");
+  eleventyConfig.addPassthroughCopy("07_*/images/**");
+  eleventyConfig.addPassthroughCopy("08_*/images/**");
+  eleventyConfig.addPassthroughCopy("09_*/images/**");
   eleventyConfig.addPassthroughCopy("a_*/images/**");
   eleventyConfig.addPassthroughCopy("a_*/**/images/**");
 
@@ -101,6 +105,10 @@ module.exports = function(eleventyConfig) {
 
   // Ignore output directory to prevent scanning it
   eleventyConfig.ignores.add("../_site/**");
+  // Ignore local Python environments and caches accidentally placed under content
+  eleventyConfig.ignores.add("clase/**/.venv/**");
+  eleventyConfig.ignores.add("clase/**/__pycache__/**");
+  eleventyConfig.ignores.add("clase/**/.ipynb_checkpoints/**");
 
   // ============================================
   // Filters

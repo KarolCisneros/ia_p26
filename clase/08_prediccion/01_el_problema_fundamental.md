@@ -165,27 +165,23 @@ Si observas que ciudades con más heladerías tienen más crimen, P(crimen|helad
 
 ```mermaid
 flowchart TD
-    PXY["<b>P(X,Y,Z)</b><br/>Distribución conjunta completa"]
+    PXY["P(X,Y,Z) - Distribución conjunta completa"]
 
-    PXY --> PYX["<b>P(Y|X,Z)</b><br/>Condicional completa"]
-    PYX --> EYX["<b>E[Y|X,Z]</b><br/>Predicción condicional"]
-    PYX --> VarQ["<b>Var[Y|X,Z], Qα[Y|X,Z]</b><br/>Varianza, quantiles"]
+    PXY --> PYX["P(Y|X,Z) - Condicional completa"]
+    PYX --> EYX["E[Y|X,Z] - Predicción condicional"]
+    PYX --> VarQ["Var[Y|X,Z], Qα[Y|X,Z] - Varianza y quantiles"]
 
-    PXY --> PY["<b>P(Y)</b><br/>Marginal"]
-    PY --> EY["<b>E[Y]</b><br/>Baseline (sin features)"]
+    PXY --> PY["P(Y) - Marginal"]
+    PY --> EY["E[Y] - Baseline (sin features)"]
 
-    PXY --> PXZ["<b>P(X,Z)</b>"]
-    PXZ --> PX["<b>P(X)</b><br/>Generación, anomalías"]
-    PX --> PHI["<b>ϕ(X)</b><br/>Representación (compresión)"]
+    PXY --> PXZ["P(X,Z)"]
+    PXZ --> PX["P(X) - Generación y anomalías"]
+    PX --> PHI["ϕ(X) - Representación (compresión)"]
 
-    PXY --> PXgivenY["<b>P(X|Y)</b><br/>Inferencia inversa"]
-
-    style PXY fill:#e8f4f8,stroke:#2c3e50,stroke-width:2px
-    style EYX fill:#fef9e7,stroke:#2c3e50
-    style EY fill:#fef9e7,stroke:#2c3e50
-    style PX fill:#fef9e7,stroke:#2c3e50
-    style PHI fill:#fef9e7,stroke:#2c3e50
+    PXY --> PXgivenY["P(X|Y) - Inferencia inversa"]
 ```
+
+![Jerarquía de objetivos de predicción](images/02_objetivos_jerarquia.png)
 
 **¿Y el efecto causal P(Y|do(X))?**
 
@@ -233,6 +229,8 @@ Imagina que tienes tres puntos en un plano y quieres trazar la curva que los con
 Matemáticamente, **todas son válidas**. Los datos — esos tres puntos — no te dicen cuál es "la correcta".
 
 Esta es la paradoja central de la predicción: los datos nunca son suficientes. Siempre necesitas algo más — un supuesto, una creencia, una restricción sobre qué curvas son "razonables". Cada método de predicción es, en el fondo, una respuesta diferente a esta pregunta: *¿qué formas del mundo consideras plausibles?*
+
+![Datos finitos, infinitas hipótesis](images/01_restriccion_tres_puntos.png)
 
 **El dilema formal**:
 - Tenemos **datos finitos** (N observaciones)

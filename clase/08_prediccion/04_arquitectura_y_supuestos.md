@@ -64,10 +64,12 @@ flowchart LR
         X1["X"] --> F1["f(θ)"] --> PY1["P(Y|X) → Ŷ"]
     end
     subgraph GEN ["GENERATIVO"]
-        PXY["Aprende P(X|Y)<br/>para cada Y"] --> BAYES["Clasifica via Bayes:<br/>P(Y|X) ∝ P(X|Y)P(Y)"]
-        PXY --> GENERA["Genera muestreando<br/>de P(X|Y=clase)"]
+        PXY["Aprende P(X|Y) para cada Y"] --> BAYES["Clasifica via Bayes: P(Y|X) ∝ P(X|Y)P(Y)"]
+        PXY --> GENERA["Genera muestreando de P(X|Y=clase)"]
     end
 ```
+
+![Discriminativo vs Generativo](images/06_discriminativo_vs_generativo.png)
 
 ### Dos significados de "Generativo"
 
@@ -116,7 +118,7 @@ flowchart TD
 flowchart LR
     subgraph GEN_NOLABEL ["GENERATIVA (sin etiquetas: VAE, GAN)"]
         direction LR
-        L_G["L ~ P(L)<br/>(latente)"] --> DEC["Decoder<br/>P(X|L;θ)"] --> XG["X generado"]
+        L_G["L ~ P(L) (latente)"] --> DEC["Decoder: P(X|L;θ)"] --> XG["X generado"]
     end
 ```
 
@@ -222,6 +224,8 @@ Todo supuesto inductivo es matemáticamente equivalente a algún tipo de "prior"
 | CNN architecture | Prior de invarianza traslacional |
 | Propiedad de Markov | Prior de independencia condicional temporal |
 | Validación cruzada | Prior implícito de generalización |
+
+![Regularización L1 vs L2](images/07_regularizacion_l1_l2.png)
 
 ### ¿Qué supuesto elegir?
 

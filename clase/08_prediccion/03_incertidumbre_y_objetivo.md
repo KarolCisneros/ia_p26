@@ -29,12 +29,14 @@ Ninguno está equivocado. El primero habla del mundo. El segundo habla del conoc
 ```mermaid
 flowchart TD
     Q["¿Qué significa P = 0.7?"]
-    Q --> F["<b>Frequentist</b><br/>En infinitas repeticiones,<br/>70% de las veces ocurre"]
-    Q --> B["<b>Bayesian</b><br/>Mi grado de creencia<br/>es 70% dado lo que sé"]
-    Q --> P["<b>Propensity</b><br/>El sistema tiene una<br/>tendencia física del 70%"]
+    Q --> F["Frequentist: 70% en repeticiones infinitas"]
+    Q --> B["Bayesian: 70% dado lo que sé"]
+    Q --> P["Propensity: tendencia física del 70%"]
 ```
 
 ---
+
+![Bayesiano vs Frequentist](images/04_bayesiano_vs_frequentist.png)
 
 ### Nota filosófica: Tipos de incertidumbre y el debate Popper-Jaynes
 
@@ -63,6 +65,8 @@ Jaynes diría: **No**. La baraja tiene un orden físico determinado después de 
 |------|--------|-------------|-------------|---------|
 | **Epistémica** | "No sé" | Incertidumbre por falta de conocimiento | Sí, con más información | Baraja: no conozco el orden, pero existe uno |
 | **Aleatoria** | "No se puede saber" | Incertidumbre irreducible del sistema | No, es fundamental | ¿Mecánica cuántica? (debatido) |
+
+![Incertidumbre epistémica vs aleatoria](images/05_incertidumbre_epistemica_vs_aleatoria.png)
 
 **La posición de Jaynes:**
 Para Jaynes, casi toda la "aleatoriedad" que usamos en estadística y ML es realmente **epistémica disfrazada**. Modelamos urnas, dados, y barajas como "aleatorios" porque:
