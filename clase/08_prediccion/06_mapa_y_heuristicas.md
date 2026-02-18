@@ -97,9 +97,9 @@ flowchart TD
 | Necesitas tomar decisiones/políticas | Cualquier D1 + Causal + Invarianza |
 | Imágenes/texto/señales | Inductivo + Arquitectura especializada (CNN, Transformer) |
 | Datos tabulares estructurados | Inductivo + Gradient Boosting |
-| Cuantificar riesgo | Quantiles o Bayesian + **P(Y\|X)** |
-| Detectar anomalías | Inductivo + **P(X)** + Density estimation |
-| Generar datos sintéticos | Inductivo + **P(X)** + VAE/GAN/Flow |
+| Cuantificar riesgo | Quantiles o Bayesian + $P(Y \mid X)$ |
+| Detectar anomalías | Inductivo + $P(X)$ + Density estimation |
+| Generar datos sintéticos | Inductivo + $P(X)$ + VAE/GAN/Flow |
 | Transfer learning | Self-supervised + Latente |
 | Simulación con física conocida | Híbrido + Physics-Informed |
 | Economía/macro | Deductivo + Calibración/Momentos |
@@ -127,10 +127,10 @@ Cada dimensión tiene preguntas que ayudan a elegir:
 
 **D3: Objetivo Matemático**
 - Pregunta: *¿Qué harás con la predicción?*
-- Decisión binaria → **P(Y|X)**
-- Un número → **E[Y|X]**
+- Decisión binaria → $P(Y \mid X)$
+- Un número → $E[Y \mid X]$
 - Cuantificar riesgo → Quantiles
-- Intervenir/causar → **do(X)**
+- Intervenir/causar → $do(X)$
 
 **D4: Arquitectura de Variables**
 - Pregunta: *¿Hay estructura conocida entre variables?*
@@ -197,7 +197,7 @@ flowchart TD
 |-----------|----------|---------------|
 | D1: Fuente | **Deductivo** | Teoría económica (Euler equations, equilibrio general) dicta la estructura |
 | D2: Probabilidad | **Frequentist** (o Bayesian en bancos centrales modernos) | Calibrar a momentos observados |
-| D3: Objetivo | **P(Y\|X)** | Distribución de outcomes dado shocks |
+| D3: Objetivo | $P(Y \mid X)$ | Distribución de outcomes dado shocks |
 | D4: Arquitectura | **Grafo** | Sistema de ecuaciones con dependencias explícitas |
 | D5: Supuesto | **Momentos/Calibración** | Ajustar para reproducir volatilidades, correlaciones observadas |
 
@@ -223,7 +223,7 @@ Teoría microeconómica → Ecuaciones estructurales → Parámetros a calibrar
 |-----------|----------|---------------|
 | D1: Fuente | **Inductivo** | No hay "teoría de imágenes"; patrones emergen de datos |
 | D2: Probabilidad | **Frequentist** | Optimizar cross-entropy loss |
-| D3: Objetivo | **P(Y\|X)** via softmax | Distribución sobre clases |
+| D3: Objetivo | $P(Y \mid X)$ via softmax | Distribución sobre clases |
 | D4: Arquitectura | **Flat** (pero CNN impone estructura) | Todas las features → output |
 | D5: Supuesto | **Arquitectura (CNN)** | Invarianza traslacional: objeto es igual donde sea en la imagen |
 
@@ -241,7 +241,7 @@ Un gato en la esquina superior izquierda es el mismo gato que en el centro. Conv
 |-----------|----------|---------------|
 | D1: Fuente | **Híbrido** | Conocimiento médico + datos de ensayos |
 | D2: Probabilidad | **Bayesian** | Necesitas incertidumbre para decisiones de vida/muerte |
-| D3: Objetivo | **P(Y\|do(X))** | ¿Qué pasa si DOY este tratamiento? (causal) |
+| D3: Objetivo | $P(Y \mid do(X))$ | ¿Qué pasa si DOY este tratamiento? (causal) |
 | D4: Arquitectura | **Causal** | Distinguir correlación de causación |
 | D5: Supuesto | **Prior clínico** | Conocimiento médico previo sobre efectos |
 
@@ -259,12 +259,12 @@ Pacientes que reciben tratamiento A pueden ser diferentes de los que reciben B (
 |-----------|----------|---------------|
 | D1: Fuente | **Inductivo** | Mercados son complejos, sin teoría simple |
 | D2: Probabilidad | **Frequentist** | Estimar quantiles empíricos |
-| D3: Objetivo | **Q₀.₀₅(Y\|X)** | El percentil 5, no la media |
+| D3: Objetivo | $Q_{0.05}(Y \mid X)$ | El percentil 5, no la media |
 | D4: Arquitectura | **Flat** | Features de mercado → pérdida |
 | D5: Supuesto | **Validación** | Backtesting en datos históricos |
 
 :::example{title="¿Por qué quantiles, no media?"}
-La media de pérdidas es irrelevante para riesgo. Importa el peor caso razonable (cola de la distribución). **E[Y|X]** puede ser positivo mientras **Q₀.₀₅(Y|X)** es muy negativo.
+La media de pérdidas es irrelevante para riesgo. Importa el peor caso razonable (cola de la distribución). $E[Y \mid X]$ puede ser positivo mientras $Q_{0.05}(Y \mid X)$ es muy negativo.
 :::
 
 ---
@@ -277,7 +277,7 @@ La media de pérdidas es irrelevante para riesgo. Importa el peor caso razonable
 |-----------|----------|---------------|
 | D1: Fuente | **Inductivo** | No hay gramática formal suficiente; aprender de corpus |
 | D2: Probabilidad | **Frequentist** | Maximizar likelihood |
-| D3: Objetivo | **P(Xₜ₊₁\|X₁:ₜ)** (GPT) o **P(Xₘₐₛₖ\|Xᵣₑₛₜₒ)** (BERT) | Self-supervised: Y se deriva de X |
+| D3: Objetivo | $P(X_{t+1} \mid X_{1:t})$ (GPT) o $P(X_{\text{mask}} \mid X_{\text{resto}})$ (BERT) | Self-supervised: Y se deriva de X |
 | D4: Arquitectura | **Latente** | Aprender representación oculta del lenguaje |
 | D5: Supuesto | **Arquitectura Transformer** | Atención permite capturar dependencias largas |
 
@@ -295,12 +295,12 @@ Etiquetar texto para cada tarea es costosísimo. El propio texto contiene "super
 |-----------|----------|---------------|
 | D1: Fuente | **Inductivo** | Fraude evoluciona, no hay modelo teórico estable |
 | D2: Probabilidad | **Frequentist** | Estimar densidad |
-| D3: Objetivo | **P(X)** | Transacciones anómalas = baja probabilidad |
+| D3: Objetivo | $P(X)$ | Transacciones anómalas = baja probabilidad |
 | D4: Arquitectura | **Flat** | Features de transacción |
 | D5: Supuesto | **Densidad/Ensemble** | KDE, Isolation Forest |
 
 :::example{title="¿Por qué unsupervised?"}
-Hay muy pocos ejemplos de fraude etiquetado. Los fraudulentos son "diferentes" de los normales. **P(X)** bajo = "esta transacción no se parece a las normales".
+Hay muy pocos ejemplos de fraude etiquetado. Los fraudulentos son "diferentes" de los normales. $P(X)$ bajo = "esta transacción no se parece a las normales".
 :::
 
 ---
@@ -313,7 +313,7 @@ Hay muy pocos ejemplos de fraude etiquetado. Los fraudulentos son "diferentes" d
 |-----------|----------|---------------|
 | D1: Fuente | **Híbrido** | Modelo físico de movimiento + calibración con datos |
 | D2: Probabilidad | **Bayesian** | Actualizar creencia sobre posición con cada medición |
-| D3: Objetivo | **P(L\|X,Z)** | Distribución de posición latente dado sensores |
+| D3: Objetivo | $P(L \mid X,Z)$ | Distribución de posición latente dado sensores |
 | D4: Arquitectura | **Latente** | Posición real L genera observaciones ruidosas X, Z |
 | D5: Supuesto | **Modelo de proceso (Kalman)** | Física del movimiento como prior |
 
@@ -331,7 +331,7 @@ La posición real es UNA, pero la medimos con múltiples sensores ruidosos. Cada
 |-----------|----------|---------------|
 | D1: Fuente | **Híbrido** | Ecuaciones de física conocidas + datos para acelerar |
 | D2: Probabilidad | **Frequentist** | Minimizar error de reconstrucción |
-| D3: Objetivo | **E[Y\|X]** | Estado futuro del fluido dado inicial |
+| D3: Objetivo | $E[Y \mid X]$ | Estado futuro del fluido dado inicial |
 | D4: Arquitectura | **Flat** (con estructura de física en loss) | Features → estado |
 | D5: Supuesto | **Ecuaciones diferenciales** | Loss incluye residual de Navier-Stokes |
 
@@ -374,7 +374,7 @@ Apunta a **entender qué estamos haciendo cuando intentamos predecirlo**.
 
 Este documento ha tratado sobre **ver** — sobre estimar, predecir, cuantificar incertidumbre. Pero ver no es actuar. El oráculo ve el futuro, pero eso no le dice qué hacer con esa visión.
 
-Existe en el campo una especie de **fetiche con la predicción** — en el sentido casi marxista del término: una fascinación con el objeto (el modelo, la métrica, el accuracy) que oscurece las relaciones subyacentes. Nos obsesionamos con P(Y|X) y olvidamos preguntar: ¿para qué queremos saber Y? ¿Qué haremos con esa predicción?
+Existe en el campo una especie de **fetiche con la predicción** — en el sentido casi marxista del término: una fascinación con el objeto (el modelo, la métrica, el accuracy) que oscurece las relaciones subyacentes. Nos obsesionamos con $P(Y \mid X)$ y olvidamos preguntar: ¿para qué queremos saber Y? ¿Qué haremos con esa predicción?
 
 Porque la inteligencia artificial no es, en su esencia, sobre predicción. Es sobre **agentes**, sobre **decisiones**, sobre sistemas que actúan en el mundo y aprenden de las consecuencias. Es sobre inteligencia — la capacidad de adaptarse, de elegir, de perseguir objetivos en entornos inciertos. La predicción es una herramienta, no el fin.
 

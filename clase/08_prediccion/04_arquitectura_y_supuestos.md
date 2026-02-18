@@ -40,9 +40,9 @@ flowchart LR
 
 | Arquitectura | Estructura | Supuesto implícito | Mejor para | Situación real |
 |--------------|------------|-------------------|------------|----------------|
-| **Flat/Discriminativa** | **[X, Z] → Y** | Variables son intercambiables como inputs | Alta precisión con muchos datos | *Clasificación de spam*: todas las features son inputs equivalentes |
-| **Generativa** | Modelo de **P(X,Z)** junto con Y | El mundo tiene estructura que podemos simular | Datos faltantes, generación | *Generar rostros*: necesitas entender cómo se distribuyen los pixels |
-| **Latente** | X,Z son vistas ruidosas de **L** oculto | La realidad es más simple que las observaciones | Ruido, fusión de sensores | *GPS + acelerómetro*: ambos miden posición real con ruido diferente |
+| **Flat/Discriminativa** | $[X, Z] \to Y$ | Variables son intercambiables como inputs | Alta precisión con muchos datos | *Clasificación de spam*: todas las features son inputs equivalentes |
+| **Generativa** | Modelo de $P(X,Z)$ junto con Y | El mundo tiene estructura que podemos simular | Datos faltantes, generación | *Generar rostros*: necesitas entender cómo se distribuyen los pixels |
+| **Latente** | X,Z son vistas ruidosas de $L$ oculto | La realidad es más simple que las observaciones | Ruido, fusión de sensores | *GPS + acelerómetro*: ambos miden posición real con ruido diferente |
 | **Grafos/PGM** | DAG o MRF de dependencias | Independencias condicionales explícitas | Interpretabilidad, conocimiento experto | *Diagnóstico médico*: síntomas dependen de enfermedad, no entre sí |
 | **Causal** | DAG con dirección causal | Mecanismos son estables bajo intervención | Decisiones, robustez OOD | *Política pública*: ¿subir impuestos CAUSA menos consumo? |
 
@@ -50,12 +50,12 @@ flowchart LR
 
 | Enfoque | Qué modela | Pregunta que responde | ¿Puede generar datos nuevos? |
 |---------|------------|----------------------|------------------------------|
-| **Discriminativo** | **P(Y\|X)** | "Dado este input X, ¿cuál es Y?" | No directamente |
-| **Generativo** | **P(X)** o **P(X,Y)** | "¿Cómo se ven los datos?" | Sí, muestreando de P(X) |
+| **Discriminativo** | $P(Y \mid X)$ | "Dado este input X, ¿cuál es Y?" | No directamente |
+| **Generativo** | $P(X)$ o $P(X,Y)$ | "¿Cómo se ven los datos?" | Sí, muestreando de $P(X)$ |
 
 :::example{title="Clasificar gatos vs perros"}
 - **Discriminativo** (ej: Logistic Regression, SVM): Aprende la frontera de decisión entre gatos y perros. No sabe "cómo se ve un gato", solo sabe distinguirlos.
-- **Generativo** (ej: Naive Bayes, Gaussian Mixture): Aprende P(X|gato) y P(X|perro) — cómo se ven los gatos, cómo se ven los perros. Puede generar imágenes nuevas Y clasificar usando Bayes.
+- **Generativo** (ej: Naive Bayes, Gaussian Mixture): Aprende $P(X \mid \text{gato})$ y $P(X \mid \text{perro})$ — cómo se ven los gatos, cómo se ven los perros. Puede generar imágenes nuevas Y clasificar usando Bayes.
 :::
 
 ```mermaid
@@ -69,7 +69,7 @@ flowchart LR
     end
 ```
 
-![Discriminativo vs Generativo](images/06_discriminativo_vs_generativo.png)
+![Discriminativo vs Generativo]({{ '/08_prediccion/images/06_discriminativo_vs_generativo.png' | url }})
 
 ### Dos significados de "Generativo"
 
@@ -77,7 +77,7 @@ El término "generativo" se usa en ML con dos significados que a veces se confun
 
 | Significado | Definición | Ejemplo |
 |-------------|------------|---------|
-| **Arquitectura generativa** (clásico) | Modelar P(X) o P(X,Y) en lugar de solo P(Y\|X) | Naive Bayes, Gaussian Mixture, VAE |
+| **Arquitectura generativa** (clásico) | Modelar $P(X)$ o $P(X,Y)$ en lugar de solo $P(Y \mid X)$ | Naive Bayes, Gaussian Mixture, VAE |
 | **IA Generativa** (moderno) | Cualquier modelo capaz de **generar contenido nuevo** | GPT, Stable Diffusion, DALL-E |
 
 :::example{title="GPT y la regla de la cadena"}
@@ -225,7 +225,7 @@ Todo supuesto inductivo es matemáticamente equivalente a algún tipo de "prior"
 | Propiedad de Markov | Prior de independencia condicional temporal |
 | Validación cruzada | Prior implícito de generalización |
 
-![Regularización L1 vs L2](images/07_regularizacion_l1_l2.png)
+![Regularización L1 vs L2]({{ '/08_prediccion/images/07_regularizacion_l1_l2.png' | url }})
 
 ### ¿Qué supuesto elegir?
 
@@ -268,9 +268,9 @@ flowchart TD
 
 | Rol de Z | Descripción | Cómo se usa | Ejemplo |
 |----------|-------------|-------------|---------|
-| **Feature adicional** | Información extra para predecir Y | Concatenar con X: **P(Y\|X,Z)** | Predecir ventas: X=historial, Z=clima |
+| **Feature adicional** | Información extra para predecir Y | Concatenar con X: $P(Y \mid X,Z)$ | Predecir ventas: X=historial, Z=clima |
 | **Proxy ruidoso de X** | Z mide lo mismo que X con error | Modelos de error de medición | Encuestas: respuesta observada Z vs opinión real X |
-| **Vista alternativa** | X y Z son perspectivas del mismo objeto | Contrastive learning: **ϕ(X) ≈ ϕ(Z)** | Imagen y su descripción textual (CLIP) |
+| **Vista alternativa** | X y Z son perspectivas del mismo objeto | Contrastive learning: $\phi(X) \approx \phi(Z)$ | Imagen y su descripción textual (CLIP) |
 | **Confounder** | Variable que afecta tanto X como Y | Controlar/bloquear en análisis causal | Educación afecta tanto ingreso como salud |
 | **Instrumento** | Variable que afecta Y solo a través de X | IV regression | Distancia a universidad como instrumento para educación |
 | **Variable de agrupación** | Define subpoblaciones | Cobertura condicional en Conformal | Garantizar precisión por género/edad |
@@ -279,10 +279,10 @@ flowchart TD
 
 | Rol de L | Descripción | Cómo se usa | Ejemplo |
 |----------|-------------|-------------|---------|
-| **Representación comprimida** | Embedding de dimensión menor | **ϕ(X) → L** donde dim(L) < dim(X) | Autoencoder, PCA |
-| **Estado oculto** | Variable no medida que genera observaciones | **P(X\|L)** donde L causa X | HMM: L=estado del sistema, X=mediciones |
+| **Representación comprimida** | Embedding de dimensión menor | $\phi(X) \to L$ donde dim(L) < dim(X) | Autoencoder, PCA |
+| **Estado oculto** | Variable no medida que genera observaciones | $P(X \mid L)$ donde L causa X | HMM: L=estado del sistema, X=mediciones |
 | **Factor latente** | Causa común de múltiples observaciones | X, Z son vistas ruidosas de L | Factor Analysis: L=inteligencia, X,Z=tests |
-| **Espacio generativo** | De donde se muestrean nuevos datos | **P(L)** y **P(X\|L)** | VAE: L~N(0,I), luego decodificar a imagen |
+| **Espacio generativo** | De donde se muestrean nuevos datos | $P(L)$ y $P(X \mid L)$ | VAE: L~N(0,I), luego decodificar a imagen |
 
 ---
 

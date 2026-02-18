@@ -30,7 +30,7 @@ python lab_prediccion.py
 
 Al terminar este módulo podrás:
 
-1. **Definir** qué es predicción y distinguir los 7 objetivos matemáticos (P(Y), E[Y], P(Y|X), E[Y|X], P(X), ϕ(X), P(Y|do(X))).
+1. **Definir** qué es predicción y distinguir los 7 objetivos matemáticos ($P(Y)$, $E[Y]$, $P(Y \mid X)$, $E[Y \mid X]$, $P(X)$, $\phi(X)$, $P(Y \mid do(X))$).
 2. **Explicar** por qué los datos nunca son suficientes y por qué toda predicción requiere restricciones.
 3. **Describir** las 5 dimensiones ortogonales que caracterizan cualquier método de predicción.
 4. **Distinguir** entre enfoques deductivo, inductivo e híbrido, y cuándo usar cada uno.

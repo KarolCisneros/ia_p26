@@ -38,7 +38,7 @@ Hay dos caminos para saber algo del mundo. El primero dice: *pienso, luego predi
 
 ---
 
-![Deductivo vs Inductivo](images/03_deductivo_vs_inductivo.png)
+![Deductivo vs Inductivo]({{ '/08_prediccion/images/03_deductivo_vs_inductivo.png' | url }})
 
 ### Enfoque Deductivo: "La teoría primero"
 
@@ -133,7 +133,7 @@ Un modelo macroeconómico tiene la forma: `C = f(Y, r, θ)` donde:
 :::
 
 :::example{title="Physics-Informed Neural Networks"}
-Quieres predecir el flujo de calor en un material. Sabes que debe satisfacer la ecuación de calor (∂T/∂t = α∇²T). En lugar de solo minimizar error de predicción, agregas un término al loss que penaliza violar la ecuación. La red aprende una función que:
+Quieres predecir el flujo de calor en un material. Sabes que debe satisfacer la ecuación de calor ($\partial T/\partial t = \alpha \nabla^2 T$). En lugar de solo minimizar error de predicción, agregas un término al loss que penaliza violar la ecuación. La red aprende una función que:
 1. Ajusta los datos observados
 2. Respeta la física conocida
 :::

@@ -36,7 +36,7 @@ flowchart TD
 
 ---
 
-![Bayesiano vs Frequentist](images/04_bayesiano_vs_frequentist.png)
+![Bayesiano vs Frequentist]({{ '/08_prediccion/images/04_bayesiano_vs_frequentist.png' | url }})
 
 ### Nota filosófica: Tipos de incertidumbre y el debate Popper-Jaynes
 
@@ -66,7 +66,7 @@ Jaynes diría: **No**. La baraja tiene un orden físico determinado después de 
 | **Epistémica** | "No sé" | Incertidumbre por falta de conocimiento | Sí, con más información | Baraja: no conozco el orden, pero existe uno |
 | **Aleatoria** | "No se puede saber" | Incertidumbre irreducible del sistema | No, es fundamental | ¿Mecánica cuántica? (debatido) |
 
-![Incertidumbre epistémica vs aleatoria](images/05_incertidumbre_epistemica_vs_aleatoria.png)
+![Incertidumbre epistémica vs aleatoria]({{ '/08_prediccion/images/05_incertidumbre_epistemica_vs_aleatoria.png' | url }})
 
 **La posición de Jaynes:**
 Para Jaynes, casi toda la "aleatoriedad" que usamos en estadística y ML es realmente **epistémica disfrazada**. Modelamos urnas, dados, y barajas como "aleatorios" porque:
@@ -89,8 +89,8 @@ Pero siguiendo a Jaynes, incluso lo que llamamos "ruido aleatorio" puede ser epi
 
 | Aspecto | Frequentist | Bayesian |
 |---------|-------------|----------|
-| Output del modelo | Punto óptimo **θ̂** | Distribución **P(θ\|Data)** |
-| Intervalos de confianza | "Si repitiera, 95% contendrían el verdadero valor" | "Hay 95% de probabilidad de que **θ** esté aquí" |
+| Output del modelo | Punto óptimo $\hat{\theta}$ | Distribución $P(\theta \mid \text{Data})$ |
+| Intervalos de confianza | "Si repitiera, 95% contendrían el verdadero valor" | "Hay 95% de probabilidad de que $\theta$ esté aquí" |
 | Priors | No existen (o son implícitos) | Explícitos y requeridos |
 | Computación | Típicamente más simple | Típicamente más costosa (MCMC, VI) |
 
@@ -135,39 +135,39 @@ La diferencia clave: **Z es observable** (la tienes en tus datos), **L es latent
 
 | Objetivo | Notación | Qué obtienes | Cuándo usarlo | Situación real |
 |----------|----------|--------------|---------------|----------------|
-| **Distribución condicional** | **P(Y\|X)** | Forma completa de la distribución | Necesitas incertidumbre completa | *Pronóstico meteorológico*: no solo "lloverá" sino probabilidad por intensidad |
-| **Valor esperado** | **E[Y\|X]** | Solo la media | Predicción puntual suficiente | *Precio de casa*: quieres UN número |
-| **Efecto causal** | **P(Y\|do(X))** | Resultado de intervención | Decisiones, políticas | *Pricing*: ¿qué pasa si CAMBIO el precio del producto? |
-| **Quantiles/Intervalos** | **Qα(Y\|X)** | Percentiles específicos | Riesgo, predicción robusta | *VaR en finanzas*: ¿cuál es la pérdida máxima al 95%? |
+| **Distribución condicional** | $P(Y \mid X)$ | Forma completa de la distribución | Necesitas incertidumbre completa | *Pronóstico meteorológico*: no solo "lloverá" sino probabilidad por intensidad |
+| **Valor esperado** | $E[Y \mid X]$ | Solo la media | Predicción puntual suficiente | *Precio de casa*: quieres UN número |
+| **Efecto causal** | $P(Y \mid do(X))$ | Resultado de intervención | Decisiones, políticas | *Pricing*: ¿qué pasa si CAMBIO el precio del producto? |
+| **Quantiles/Intervalos** | $Q_\alpha(Y \mid X)$ | Percentiles específicos | Riesgo, predicción robusta | *VaR en finanzas*: ¿cuál es la pérdida máxima al 95%? |
 
 ### Caso B: SIN variable objetivo (Unsupervised)
 
 | Objetivo | Notación | Qué obtienes | Cuándo usarlo | Situación real |
 |----------|----------|--------------|---------------|----------------|
-| **Distribución de datos** | **P(X)** | Densidad de probabilidad | Detección de anomalías, generación | *Fraude*: transacciones con baja **P(X)** son sospechosas |
-| **Representación** | **ϕ(X) → L** | Embedding/compresión (L es latente) | Reducción de dimensión, transfer | *Autoencoder*: comprimir imágenes; *BERT*: embeddings de texto |
-| **Estructura latente discreta** | **P(C\|X)** | Asignación a clusters | Segmentación, taxonomía | *Segmentar clientes* en grupos de comportamiento |
-| **Reconstrucción** | **E[X]** o **X̂** | Versión "limpia" de input | Denoising, imputación | *Restaurar imagen borrosa*, completar datos faltantes |
+| **Distribución de datos** | $P(X)$ | Densidad de probabilidad | Detección de anomalías, generación | *Fraude*: transacciones con baja $P(X)$ son sospechosas |
+| **Representación** | $\phi(X) \to L$ | Embedding/compresión (L es latente) | Reducción de dimensión, transfer | *Autoencoder*: comprimir imágenes; *BERT*: embeddings de texto |
+| **Estructura latente discreta** | $P(C \mid X)$ | Asignación a clusters | Segmentación, taxonomía | *Segmentar clientes* en grupos de comportamiento |
+| **Reconstrucción** | $E[X]$ o $\hat{X}$ | Versión "limpia" de input | Denoising, imputación | *Restaurar imagen borrosa*, completar datos faltantes |
 
 ### Caso C: MIXTO (Self-supervised, Generativo)
 
 | Objetivo | Notación | Qué obtienes | Cuándo usarlo | Situación real |
 |----------|----------|--------------|---------------|----------------|
-| **Distribución con latentes** | **P(X,L)** | Modelo generativo con espacio latente | Datos faltantes, generación | *VAE*: generar caras nuevas; L captura variaciones |
-| **Predicción de parte de X** | **P(X₂\|X₁)** | Y derivado del mismo X | Pretraining, representaciones | *GPT*: predecir siguiente palabra; *BERT*: predecir palabra enmascarada |
+| **Distribución con latentes** | $P(X,L)$ | Modelo generativo con espacio latente | Datos faltantes, generación | *VAE*: generar caras nuevas; L captura variaciones |
+| **Predicción de parte de X** | $P(X_2 \mid X_1)$ | Y derivado del mismo X | Pretraining, representaciones | *GPT*: predecir siguiente palabra; *BERT*: predecir palabra enmascarada |
 
 ### ¿Qué objetivo elegir?
 
 | Tu necesidad | Objetivo recomendado |
 |--------------|----------------------|
-| Un número (predicción puntual) | **E[Y\|X]** |
-| Probabilidad de cada clase | **P(Y\|X)** |
-| Cuantificar riesgo (colas) | **Qα(Y\|X)** (quantiles) |
-| Tomar decisiones / intervenir | **P(Y\|do(X))** (causal) |
-| Detectar anomalías | **P(X)** (densidad) |
-| Comprimir / representar datos | **ϕ(X)** (embeddings) |
-| Agrupar sin etiquetas | **P(C\|X)** (clustering) |
-| Pretraining para transfer | **P(X₂\|X₁)** (self-supervised) |
+| Un número (predicción puntual) | $E[Y \mid X]$ |
+| Probabilidad de cada clase | $P(Y \mid X)$ |
+| Cuantificar riesgo (colas) | $Q_\alpha(Y \mid X)$ (quantiles) |
+| Tomar decisiones / intervenir | $P(Y \mid do(X))$ (causal) |
+| Detectar anomalías | $P(X)$ (densidad) |
+| Comprimir / representar datos | $\phi(X)$ (embeddings) |
+| Agrupar sin etiquetas | $P(C \mid X)$ (clustering) |
+| Pretraining para transfer | $P(X_2 \mid X_1)$ (self-supervised) |
 
 > *Estas son heurísticas, no reglas. La elección óptima en esta dimensión depende de las otras cuatro — entender el sistema completo es más importante que optimizar cada eje por separado.*
 
