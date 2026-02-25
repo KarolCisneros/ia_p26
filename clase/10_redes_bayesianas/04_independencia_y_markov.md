@@ -178,28 +178,20 @@ graph TD
     A --> M(("M"))
 ```
 
-**Pregunta 1:** ¿$B \perp E$? (sin evidencia)
-
 **Pregunta 1:** ¿\(B \perp_d E\)? (sin evidencia, \(Z=\emptyset\))
 
 Camino: \(B \to A \leftarrow E\). El nodo \(A\) es un **colisionador**. Como \(A \notin Z\) y ningún descendiente de \(A\) está en \(Z\), el camino está **bloqueado**.  
 Conclusión: \(B \perp_d E\). (Robo y terremoto son independientes si no observamos nada.)
-
-**Pregunta 2:** ¿$B \perp E \mid A$?
 
 **Pregunta 2:** ¿\(B \perp_d E \mid A\)? (aquí \(Z=\{A\}\))
 
 Mismo camino: \(B \to A \leftarrow E\). \(A\) es colisionador y ahora **sí** está observado (\(A\in Z\)), así que el colisionador se “abre” y el camino queda **activo**.  
 Conclusión: \(B \not\perp_d E \mid A\). Si observamos la alarma, robo y terremoto se vuelven dependientes (*explaining away*).
 
-**Pregunta 3:** ¿$J \perp M \mid A$?
-
 **Pregunta 3:** ¿\(J \perp_d M \mid A\)? (aquí \(Z=\{A\}\))
 
 Camino: \(J \leftarrow A \rightarrow M\). El nodo \(A\) es una **bifurcación** (no-colisionador) y está observado (\(A\in Z\)), así que el camino se **bloquea**.  
 Conclusión: \(J \perp_d M \mid A\). Si sabemos si sonó la alarma, las llamadas de Juan y María son independientes.
-
-**Pregunta 4:** ¿$B \perp E \mid J$?
 
 **Pregunta 4:** ¿\(B \perp_d E \mid J\)? (aquí \(Z=\{J\}\))
 
