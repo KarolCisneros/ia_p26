@@ -94,6 +94,20 @@ Al hacer $do(\text{Dept} = A)$, cortamos la flecha Género → Departamento. Aho
 
 $$do(X = x) \implies \text{eliminar todas las flechas} \rightarrow X \text{ y fijar } X = x$$
 
+En el lenguaje de **ecuaciones estructurales**, $do(X = x)$ significa: reemplazar la ecuación que genera $X$ (que depende de sus causas) por la constante $X = x$, y dejar **todas las demás ecuaciones intactas**. Por ejemplo, si nuestro modelo es:
+
+- $Z \sim \mathcal{N}(0, 1)$
+- $X = 0.7 \cdot Z + \epsilon_X$ ← **esta ecuación se elimina**
+- $Y = 2.0 \cdot X + 3.0 \cdot Z + \epsilon_Y$ ← esta se mantiene
+
+Después de $do(X = 3)$, el sistema se convierte en:
+
+- $Z \sim \mathcal{N}(0, 1)$
+- $X = 3$ ← **constante**, ya no depende de $Z$
+- $Y = 2.0 \cdot 3 + 3.0 \cdot Z + \epsilon_Y = 6 + 3Z + \epsilon_Y$
+
+Las demás ecuaciones no cambian — cada una representa un **mecanismo autónomo** del mundo. Intervenir en $X$ cambia *cómo se genera $X$*, no cómo $Y$ responde a $X$.
+
 ---
 
 ## La fórmula de ajuste
@@ -103,6 +117,29 @@ Si no podemos intervenir físicamente (no podemos asignar departamentos al azar)
 Sí, si conocemos el confounder $Z$. La **fórmula de ajuste** (también llamada *backdoor adjustment*) dice:
 
 $$P(Y \mid do(X = x)) = \sum_z P(Y \mid X = x, Z = z) \cdot P(Z = z)$$
+
+<details>
+<summary><strong>¿De dónde sale esta fórmula?</strong></summary>
+
+La derivación sigue directamente de la cirugía de grafos:
+
+1. En el **grafo mutilado** (después de $do(X=x)$), cortamos todas las flechas que llegan a $X$. Esto hace que $Z$ y $X$ sean **independientes**: $Z \perp X$.
+
+2. Escribimos la probabilidad en el grafo mutilado usando la regla del producto:
+
+$$P(Y \mid do(X=x)) = \sum_z P(Y \mid X=x, Z=z) \cdot P(Z=z \mid do(X=x))$$
+
+3. Como $Z$ y $X$ son independientes en el grafo mutilado (cortamos $Z \to X$), la distribución de $Z$ no cambia cuando fijamos $X$:
+
+$$P(Z=z \mid do(X=x)) = P(Z=z)$$
+
+4. Sustituyendo:
+
+$$P(Y \mid do(X=x)) = \sum_z P(Y \mid X=x, Z=z) \cdot P(Z=z)$$
+
+La clave: $P(Y \mid X=x, Z=z)$ es la misma en ambos grafos (esa relación no se toca en la cirugía). Lo único que cambia es el peso: $P(Z)$ en vez de $P(Z \mid X)$.
+
+</details>
 
 Compárala con la probabilidad condicional ingenua:
 
@@ -127,7 +164,7 @@ La estimación causal pondera cada departamento por *la fracción general de sol
 
 > **Intuición backdoor (una línea):** Ajusta por confounders (forks). **Nunca** ajustes por colliders.
 
-Ajustar por un confounder (fork) elimina la correlación espuria. Pero ajustar por un collider **crea** una correlación que no existía — exactamente lo contrario de lo que queremos.
+Ajustar por un confounder (fork) elimina la correlación espuria. Pero ajustar por un collider **crea** una correlación que no existía — exactamente lo contrario de lo que queremos. En el [notebook práctico](notebooks/causal_intro.ipynb) demostramos esto con datos simulados: dos variables independientes se vuelven correlacionadas al ajustar por su collider.
 
 ---
 
@@ -190,15 +227,7 @@ En todos estos casos, necesitas estimar $P(Y \mid do(X))$ a partir de datos obse
 
 Volvamos a Berkeley. ¿Hay discriminación por género en las admisiones?
 
-El grafo causal es:
-
-```mermaid
-graph TD
-    G(("Género")) --> D(("Departamento"))
-    D --> A(("Admisión"))
-```
-
-El departamento es un confounder (fork). Aplicamos la fórmula de ajuste:
+Como vimos en las [estructuras causales](01_estructuras_causales.md#la-paradoja-de-simpson), la selectividad del departamento actúa como un confounder (fork) — influye tanto en quiénes aplican como en la tasa de admisión. Adoptando esa interpretación, el departamento es la variable que debemos ajustar. Aplicamos la fórmula de ajuste:
 
 $$P(\text{adm} \mid do(\text{género} = \text{mujer})) = \sum_d P(\text{adm} \mid \text{mujer}, D = d) \cdot P(D = d)$$
 
@@ -268,7 +297,22 @@ Si $X$ causa $Y$, entonces $Y = f(X) + N$ donde el ruido $N$ es independiente de
 | **Causal** ($X \to Y$) | $Y = f(X) + \text{residuos}$ | Residuos **independientes** de $X$ (banda plana) |
 | **Anti-causal** ($Y \to X$) | $X = g(Y) + \text{residuos}$ | Residuos **dependientes** de $Y$ (patrones visibles) |
 
-La asimetría surge porque el mecanismo causal ($f$) y la distribución de la causa ($P(X)$) son **independientes** entre sí (principio de independencia causa-mecanismo). En la dirección anti-causal, esta independencia se rompe y los residuos muestran estructura.
+#### ¿Por qué existe esta asimetría? El principio de independencia causa-mecanismo
+
+La asimetría surge de un principio fundamental: **la distribución de la causa y el mecanismo causal son independientes entre sí**.
+
+¿Qué significa esto? Que la naturaleza genera las cosas en dos pasos separados que no se "conocen":
+
+1. **Primero** se genera $X$ según su propia distribución $P(X)$ (por ejemplo, la altitud de las estaciones meteorológicas depende de la geografía)
+2. **Después** el mecanismo $f$ transforma $X$ en $Y = f(X) + N$ (la temperatura depende de la altitud por leyes físicas, más ruido climático)
+
+El mecanismo $f$ (leyes físicas) no sabe ni le importa cómo están distribuidas las estaciones. Y la distribución de estaciones no depende de cómo la temperatura responde a la altitud. Son procesos **modulares**.
+
+#### La matemática de la asimetría
+
+**Dirección causal** ($X \to Y$): por construcción, $Y = f(X) + N$ con $N \perp X$. Al ajustar $Y \approx \hat{f}(X)$, los residuos son $Y - \hat{f}(X) \approx N$. Como $N$ es independiente de $X$ por hipótesis, los residuos forman una **banda plana** — sin estructura.
+
+**Dirección anti-causal** ($Y \to X$): ahora intentamos $X = g(Y) + \text{residuos}$. Pero $Y = f(X) + N$ "mezcla" $X$ y $N$. Para distintos valores de $Y$, la composición de "$X$ original" y "ruido $N$" varía. Por ejemplo, si $f = \tanh$ (saturación): cuando $\lvert Y \rvert \approx 1$, $\tanh$ se aplana y muchos valores distintos de $X$ producen el mismo $Y$ — la función inversa $g$ no puede separar limpiamente $X$ del ruido. El resultado: los residuos muestran **heteroscedasticidad**, es decir, la dispersión (varianza) de los residuos cambia con el valor de $Y$ (*hetero* = diferente, *scedástico* = dispersión).
 
 ![Diagnóstico de residuos]({{ '/11_grafos_causales/images/residual_diagnosis.png' | url }})
 
@@ -276,7 +320,7 @@ En la figura:
 - **Fila superior (causal):** los residuos de $Y \sim f(X)$ forman una banda plana alrededor de cero, sin estructura. La correlación es cercana a 0.
 - **Fila inferior (anti-causal):** los residuos de $X \sim g(Y)$ muestran heteroscedasticidad (la varianza cambia con $Y$). La correlación es mayor.
 
-:::example{title="Intuición: ¿por qué la asimetría?"}
+:::example{title="Intuición: altitud y temperatura"}
 Imagina que $X$ es la altitud de una estación meteorológica y $Y$ es la temperatura. La altitud causa la temperatura (a mayor altitud, menor temperatura).
 
 - **Dirección causal:** La temperatura depende de la altitud mediante una ley física estable. El ruido (clima diario, microclima) es independiente de la altitud. Residuos planos.
@@ -306,7 +350,15 @@ grafo = nx.DiGraph([("Z", "X"), ("Z", "Y"), ("X", "Y")])
 
 #### Paso 2: Identificar — el criterio backdoor
 
-Este es el paso clave. DoWhy recorre el grafo y aplica el **criterio backdoor** para determinar qué variables ajustar. El algoritmo funciona así:
+> **Criterio backdoor.** Un conjunto de variables $S$ satisface el criterio backdoor relativo a $(X, Y)$ en un DAG $G$ si:
+>
+> 1. Ningún elemento de $S$ es **descendiente** de $X$
+> 2. $S$ **bloquea** todo camino entre $X$ e $Y$ que contiene una flecha *entrando* a $X$ (un "camino backdoor")
+>
+> Si $S$ satisface el criterio, entonces:
+> $$P(Y \mid do(X=x)) = \sum_s P(Y \mid X=x, S=s) \cdot P(S=s)$$
+
+Este es el paso clave. DoWhy recorre el grafo y aplica este criterio para determinar qué variables ajustar. El algoritmo funciona así:
 
 **Entrada:** DAG, tratamiento $X$, resultado $Y$
 

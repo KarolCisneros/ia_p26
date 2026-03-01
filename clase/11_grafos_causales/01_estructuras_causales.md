@@ -35,16 +35,31 @@ Departamento por departamento, las mujeres tenían tasas de admisión **iguales 
 
 ![Paradoja de Simpson: Berkeley 1973]({{ '/11_grafos_causales/images/simpson_paradox.png' | url }})
 
-La respuesta: **las mujeres se postularon en mayor proporción a departamentos más competitivos** (con tasas de admisión bajas para todos). El departamento al que aplicas actúa como una variable intermedia que distorsiona la comparación agregada.
+La respuesta: **las mujeres se postularon en mayor proporción a departamentos más competitivos** (con tasas de admisión bajas para todos). Pero, ¿cuál es exactamente la estructura causal? Depende de cómo modelemos el problema — y esto tiene consecuencias:
+
+**Interpretación 1 (chain — mediación):** El género influye en la *elección* de departamento, y el departamento determina la tasa de admisión. Aquí el departamento es un **mediador**:
+
+```mermaid
+graph LR
+    G(("Género")) -->|"elección"| D(("Departamento"))
+    D -->|"tasa"| A(("Admisión"))
+```
+
+En esta lectura, la pregunta "¿hay discriminación?" se responde mirando el **efecto directo** de género sobre admisión *dentro* de cada departamento. Desglosar por departamento es correcto porque queremos aislar ese efecto directo.
+
+**Interpretación 2 (fork — confounding):** Cada departamento tiene su propia selectividad (A es fácil, F es difícil). La selectividad del departamento influye tanto en quién aplica como en quién es admitido. Aquí la selectividad es un **confounder**:
 
 ```mermaid
 graph TD
-    G(("Género")) --> D(("Departamento"))
-    D --> A(("Admisión"))
-    G -.->|"¿efecto directo?"| A
+    S(("Selectividad<br/>del depto.")) --> G2(("Quiénes<br/>aplican"))
+    S --> A2(("Tasa de<br/>admisión"))
 ```
 
-El **Departamento** es un *confounder* (variable de confusión): influye tanto en la composición de los solicitantes como en la tasa de admisión. Si no lo tomamos en cuenta, llegamos a una conclusión incorrecta.
+En esta lectura, desglosar por departamento **ajusta por el confounder** y elimina la correlación espuria.
+
+**La lección clave:** ambas interpretaciones conducen a la misma acción (desglosar por departamento), pero por **razones causales distintas** (aislar el efecto directo vs. eliminar confounding). Los datos no distinguen entre ellas — necesitas **conocimiento del dominio** para decidir cuál DAG es correcto. Este es un tema central del módulo: la causalidad viene del modelo, no de los datos.
+
+Para el resto del módulo adoptaremos la **interpretación fork** (selectividad como confounder), que es la más usada en la literatura y la que motiva la fórmula de ajuste.
 
 Esta paradoja no es un caso aislado. Aparece en:
 
@@ -105,6 +120,16 @@ graph TD
 No. El **verano** (calor) es la causa común: la gente come más helado Y nada más. Si controlas por la temporada (solo miras datos de julio), la correlación entre helado y ahogamientos **desaparece**.
 
 $Z$ es un **confounder** (variable de confusión): crea una correlación espuria entre $X$ e $Y$.
+:::
+
+:::example{title="¿Qué significa 'condicionar en Z'?"}
+"Condicionar en $Z$" tiene tres interpretaciones equivalentes en la práctica:
+
+1. **Estratificar:** dividir los datos en subgrupos donde $Z$ tiene el mismo valor y analizar cada subgrupo por separado
+2. **Controlar:** incluir $Z$ como covariable en una regresión ($Y \sim X + Z$), que calcula el efecto de $X$ "a igualdad de $Z$"
+3. **Filtrar:** mirar solo los datos donde $Z = z$ (para un valor fijo $z$)
+
+En la paradoja de Simpson, "condicionar en Departamento" = analizar cada departamento por separado. Dentro de cada departamento, la correlación espuria entre género y admisión desaparece.
 :::
 
 **Regla del fork:** $X$ e $Y$ están correlacionados. Pero si condicionamos en $Z$ (fijamos su valor), la correlación **desaparece**:
@@ -184,6 +209,27 @@ $$X \perp Y \quad \text{pero} \quad X \not\perp Y \mid C$$
 | **Collider** | $X \rightarrow C \leftarrow Y$ | **Independientes** | Correlacionados |
 
 **Patrón clave:** En forks y chains, observar el nodo central **bloquea** el flujo de información. En colliders, observar el nodo central **abre** el flujo de información.
+
+---
+
+## d-separación: la regla general
+
+Las tres estructuras son los bloques de un concepto más general: **d-separación** (separación direccional). En un DAG arbitrario (con muchos nodos y flechas), dos variables $X$ e $Y$ están **d-separadas** por un conjunto de variables $S$ si **todo camino** entre $X$ e $Y$ está "bloqueado" por $S$.
+
+Un camino entre $X$ e $Y$ está **bloqueado** por $S$ si contiene al menos un nodo que cumple:
+
+| Tipo de nodo en el camino | Condición para bloquear |
+|---|---|
+| **No-collider** (fork o chain) | El nodo **está en** $S$ — condicionar bloquea el flujo |
+| **Collider** | El nodo **no está en** $S$ **y** ningún **descendiente** del nodo está en $S$ |
+
+Si $X$ e $Y$ están d-separados por $S$, entonces: $X \perp Y \mid S$.
+
+**Nota importante sobre descendientes:** condicionar en un **descendiente** de un collider también "abre" el camino, igual que condicionar en el collider mismo. Por ejemplo, si $X \rightarrow C \leftarrow Y$ y $C \rightarrow D$, condicionar en $D$ también crea correlación entre $X$ e $Y$.
+
+Esta regla generaliza las tres estructuras básicas a grafos de cualquier tamaño y es la base del **criterio backdoor** que veremos en la [siguiente sección](02_do_y_causalidad.md).
+
+---
 
 :::exercise{title="¿Qué estructura es?"}
 
