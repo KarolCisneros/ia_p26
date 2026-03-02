@@ -80,12 +80,18 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("03_*/images/**");
   eleventyConfig.addPassthroughCopy("04_*/images/**");
   eleventyConfig.addPassthroughCopy("05_*/images/**");
+  eleventyConfig.addPassthroughCopy("06_*/images/**");
+  eleventyConfig.addPassthroughCopy("07_*/images/**");
+  eleventyConfig.addPassthroughCopy("08_*/images/**");
+  eleventyConfig.addPassthroughCopy("09_*/images/**");
+  eleventyConfig.addPassthroughCopy("10_*/images/**");
+  eleventyConfig.addPassthroughCopy("11_*/images/**");
   eleventyConfig.addPassthroughCopy("a_*/images/**");
   eleventyConfig.addPassthroughCopy("a_*/**/images/**");
 
   // Copy PDF files from content directories (exclude b_libros which is gitignored)
   // Match all PDFs in numbered directories (01_, 02_, 03_, etc.)
-  ['01', '02', '03', '04', '05', '06', '07', '08', '09'].forEach(num => {
+  ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'].forEach(num => {
     eleventyConfig.addPassthroughCopy(`${num}_*/**/*.pdf`);
   });
   // Match all PDFs in appendix directories
@@ -101,6 +107,10 @@ module.exports = function(eleventyConfig) {
 
   // Ignore output directory to prevent scanning it
   eleventyConfig.ignores.add("../_site/**");
+  // Ignore local Python environments and caches accidentally placed under content
+  eleventyConfig.ignores.add("clase/**/.venv/**");
+  eleventyConfig.ignores.add("clase/**/__pycache__/**");
+  eleventyConfig.ignores.add("clase/**/.ipynb_checkpoints/**");
 
   // ============================================
   // Filters
