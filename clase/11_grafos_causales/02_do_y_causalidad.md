@@ -64,29 +64,29 @@ El operador $do(X = x)$ tiene una interpretación gráfica elegante: **corta tod
 
 ¿Por qué? Cuando *observamos* $X = x$, el valor de $X$ fue determinado por sus causas. Esas causas pueden estar correlacionadas con $Y$ por otros caminos. Pero cuando *intervenimos* y fijamos $X = x$, las causas de $X$ ya no importan — nosotros decidimos el valor.
 
-### Ejemplo: Berkeley
+### Ejemplo: Becas
 
 **Grafo original** (observacional):
 
 ```mermaid
 graph TD
-    G(("Género")) -->|"influye en<br/>elección"| D(("Departamento"))
-    D -->|"tasa propia<br/>de admisión"| A(("Admisión"))
-    G -.->|"¿efecto<br/>directo?"| A
+    N(("NSE")) -->|"determina<br/>asignación"| B(("Beca"))
+    B -->|"efecto sobre"| R(("Rendimiento"))
+    N -->|"afecta"| R
 ```
 
-**Grafo mutilado** — $do(\text{Dept} = A)$:
+**Grafo mutilado** — $do(\text{Beca} = \text{sí})$:
 
 ```mermaid
 graph TD
-    G(("Género")) -.->|"cortada"| D(("Dept = A"))
-    D -->|"tasa de<br/>admisión"| A(("Admisión"))
-    G -.->|"¿efecto<br/>directo?"| A
+    N(("NSE")) -.->|"cortada"| B(("Beca = sí"))
+    B -->|"efecto sobre"| R(("Rendimiento"))
+    N -->|"afecta"| R
 
-    style D fill:#E94F37,color:#fff
+    style B fill:#E94F37,color:#fff
 ```
 
-Al hacer $do(\text{Dept} = A)$, cortamos la flecha Género → Departamento. Ahora el departamento no depende del género — **nosotros** lo fijamos. Esto nos permite medir el efecto directo del género sobre la admisión sin la distorsión del departamento.
+Al hacer $do(\text{Beca} = \text{sí})$, cortamos la flecha NSE → Beca. Ahora la beca no depende del NSE — **nosotros** la asignamos. Esto nos permite medir el efecto causal de la beca sobre el rendimiento sin la distorsión del NSE.
 
 ![Cirugía de grafos]({{ '/11_grafos_causales/images/graph_surgery.png' | url }})
 
@@ -153,9 +153,9 @@ La diferencia está en **una sola cosa**:
 | **Condicional** (ingenuo) | $P(Z = z \mid X = x)$ — distribución **sesgada** por $X$ |
 
 :::example{title="La diferencia en una línea"}
-En Berkeley, la estimación ingenua pondera cada departamento por *la fracción de mujeres que se postuló ahí*. Como las mujeres se postularon más a departamentos competitivos, el promedio ponderado **baja**.
+En el ejemplo de las becas, la estimación ingenua pondera cada grupo de NSE por *la fracción de becados en ese grupo*. Como la mayoría de los becados son de NSE bajo, el promedio ponderado **baja**.
 
-La estimación causal pondera cada departamento por *la fracción general de solicitantes*, sin importar el género. Esto elimina el sesgo.
+La estimación causal pondera cada grupo de NSE por *la fracción general de estudiantes*, sin importar si tienen beca. Esto elimina el sesgo.
 :::
 
 ![Ajuste por confounding]({{ '/11_grafos_causales/images/confounding_adjustment.png' | url }})
@@ -225,24 +225,24 @@ En todos estos casos, necesitas estimar $P(Y \mid do(X))$ a partir de datos obse
 
 ## Simpson resuelto
 
-Volvamos a Berkeley. ¿Hay discriminación por género en las admisiones?
+Volvamos al ejemplo de las becas. ¿Perjudican las becas el rendimiento académico?
 
-Como vimos en las [estructuras causales](01_estructuras_causales.md#la-paradoja-de-simpson), la paradoja admite dos interpretaciones causales. Adoptamos la **interpretación fork**: la selectividad del departamento actúa como confounder — influye tanto en quiénes aplican como en la tasa de admisión.
+Como vimos en las [estructuras causales](01_estructuras_causales.md#la-paradoja-de-simpson), la paradoja admite dos interpretaciones causales. Adoptamos la **interpretación fork**: el NSE actúa como confounder — influye tanto en quién recibe beca como en el rendimiento.
 
 ```mermaid
 graph TD
-    D(("Departamento<br/>(selectividad)")) -->|"las mujeres aplican más<br/>a deptos. competitivos"| G(("Género<br/>(composición)"))
-    D -->|"deptos. competitivos<br/>admiten menos"| A(("Admisión"))
-    G -.->|"¿discriminación?"| A
+    N(("NSE")) -->|"becas van a<br/>NSE bajo"| B(("Beca"))
+    N -->|"NSE bajo →<br/>menor rendimiento<br/>de base"| R(("Rendimiento"))
+    B -.->|"¿efecto real?"| R
 ```
 
-El camino espurio es $\text{Género} \leftarrow \text{Depto} \rightarrow \text{Admisión}$: la selectividad del departamento genera una correlación entre género y admisión aunque no haya discriminación. Para bloquear ese camino, ajustamos por Departamento:
+El camino espurio es $\text{Beca} \leftarrow \text{NSE} \rightarrow \text{Rendimiento}$: el NSE genera una correlación entre beca y rendimiento aunque la beca no perjudique. Para bloquear ese camino, ajustamos por NSE:
 
-$$P(\text{adm} \mid do(\text{género} = \text{mujer})) = \sum_d P(\text{adm} \mid \text{mujer}, D = d) \cdot P(D = d)$$
+$$P(\text{rendimiento} \mid do(\text{beca} = \text{sí})) = \sum_{\text{nse}} P(\text{rendimiento} \mid \text{beca}, \text{NSE} = \text{nse}) \cdot P(\text{NSE} = \text{nse})$$
 
-Esto pondera cada departamento por su proporción **en la población total**, no por la proporción de mujeres. El resultado: **no hay evidencia de discriminación**. La diferencia agregada se debía a que las mujeres se postularon a departamentos más competitivos.
+Esto pondera cada grupo de NSE por su proporción **en la población total**, no por la proporción de becados. El resultado: **no hay evidencia de que las becas perjudiquen el rendimiento**. La diferencia agregada se debía a la composición por NSE de cada grupo.
 
-La fórmula de ajuste produce el mismo resultado que obtendríamos con un RCT (si pudiéramos asignar departamentos al azar). Esa es la magia: **respuestas experimentales a partir de datos observacionales**, siempre y cuando conozcamos el grafo causal correcto.
+La fórmula de ajuste produce el mismo resultado que obtendríamos con un RCT (si pudiéramos asignar becas al azar). Esa es la magia: **respuestas experimentales a partir de datos observacionales**, siempre y cuando conozcamos el grafo causal correcto.
 
 ---
 
@@ -484,7 +484,7 @@ graph TD
 <details>
 <summary><strong>Ver Respuestas</strong></summary>
 
-1. **Fork.** Gravedad → Tratamiento, Gravedad → Mortalidad. Es la misma estructura que Berkeley.
+1. **Fork.** Gravedad → Tratamiento, Gravedad → Mortalidad. Es la misma estructura que el ejemplo de las becas.
 
 2. Los doctores dan el tratamiento a los pacientes más graves. Los pacientes graves tienen mayor mortalidad de todas formas. La estimación ingenua mezcla el efecto del tratamiento con el efecto de la gravedad.
 

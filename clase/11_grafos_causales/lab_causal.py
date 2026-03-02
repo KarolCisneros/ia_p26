@@ -54,88 +54,85 @@ def _save(fig, name: str) -> None:
 
 
 # -----------------------------------------------------------------------------
-# 1) Simpson's Paradox — Berkeley-style admissions
+# 1) Simpson's Paradox — Becas y NSE
 # -----------------------------------------------------------------------------
 
 
-def plot_simpson_berkeley():
-    """Simpson's paradox: aggregate vs. stratified admission rates."""
+def plot_simpson_beca():
+    """Simpson's paradox: aggregate vs. stratified scholarship performance."""
 
-    # Simplified Berkeley-style data (6 departments)
-    departments = ["A", "B", "C", "D", "E", "F"]
+    # Beca/NSE data
+    # NSE Bajo: con beca 480/800 (60%), sin beca 100/200 (50%)
+    # NSE Alto: con beca 180/200 (90%), sin beca 640/800 (80%)
+    # Aggregate: con beca 660/1000 (66%), sin beca 740/1000 (74%)
 
-    # Admission rates per department (men, women)
-    men_rates = np.array([0.62, 0.63, 0.37, 0.33, 0.28, 0.06])
-    women_rates = np.array([0.82, 0.68, 0.34, 0.35, 0.24, 0.07])
+    nse_labels = ["NSE Bajo", "NSE Alto"]
+    beca_rates = np.array([0.60, 0.90])
+    no_beca_rates = np.array([0.50, 0.80])
 
-    # Number of applicants (men, women) — drives the aggregate paradox
-    men_apps = np.array([825, 560, 325, 417, 191, 373])
-    women_apps = np.array([108, 25, 593, 375, 393, 341])
-
-    # Aggregate rates
-    men_agg = (men_rates * men_apps).sum() / men_apps.sum()
-    women_agg = (women_rates * women_apps).sum() / women_apps.sum()
+    beca_agg = 0.66
+    no_beca_agg = 0.74
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
     # LEFT: Aggregate
     bars = ax1.bar(
-        ["Hombres", "Mujeres"],
-        [men_agg * 100, women_agg * 100],
+        ["Con beca", "Sin beca"],
+        [beca_agg * 100, no_beca_agg * 100],
         color=[COLORS["blue"], COLORS["red"]],
         width=0.5,
         edgecolor="white",
         linewidth=1.5,
     )
-    for bar, val in zip(bars, [men_agg * 100, women_agg * 100]):
+    for bar, val in zip(bars, [beca_agg * 100, no_beca_agg * 100]):
         ax1.text(
             bar.get_x() + bar.get_width() / 2,
             bar.get_height() + 1,
-            f"{val:.1f}%",
+            f"{val:.0f}%",
             ha="center",
             va="bottom",
             fontweight="bold",
             fontsize=14,
         )
-    ax1.set_ylim(0, 60)
-    ax1.set_ylabel("Tasa de admisión (%)")
-    ax1.set_title("Datos agregados\n(parece haber sesgo)", fontsize=14)
+    ax1.set_ylim(0, 100)
+    ax1.set_ylabel("Promedio alto (%)")
+    ax1.set_title("Datos agregados\n(becados parecen peores)", fontsize=14)
     ax1.spines["top"].set_visible(False)
     ax1.spines["right"].set_visible(False)
 
-    # RIGHT: Stratified by department
-    x = np.arange(len(departments))
+    # RIGHT: Stratified by NSE
+    x = np.arange(len(nse_labels))
     width = 0.35
-    bars_m = ax2.bar(
+    ax2.bar(
         x - width / 2,
-        men_rates * 100,
+        beca_rates * 100,
         width,
-        label="Hombres",
+        label="Con beca",
         color=COLORS["blue"],
         edgecolor="white",
         linewidth=1.5,
     )
-    bars_w = ax2.bar(
+    ax2.bar(
         x + width / 2,
-        women_rates * 100,
+        no_beca_rates * 100,
         width,
-        label="Mujeres",
+        label="Sin beca",
         color=COLORS["red"],
         edgecolor="white",
         linewidth=1.5,
     )
     ax2.set_xticks(x)
-    ax2.set_xticklabels([f"Dept {d}" for d in departments])
+    ax2.set_xticklabels(nse_labels)
     ax2.set_ylim(0, 100)
-    ax2.set_ylabel("Tasa de admisión (%)")
+    ax2.set_ylabel("Promedio alto (%)")
     ax2.set_title(
-        "Desglosado por departamento\n(mujeres iguales o mejores)", fontsize=14
+        "Desglosado por NSE\n(becados mejores en ambos grupos)", fontsize=14
     )
-    ax2.legend(loc="upper right")
+    ax2.legend(loc="lower right")
     ax2.spines["top"].set_visible(False)
     ax2.spines["right"].set_visible(False)
 
-    fig.suptitle("Paradoja de Simpson: Admisiones UC Berkeley 1973", fontsize=16, y=1.02)
+    fig.suptitle("Paradoja de Simpson: ¿Las becas perjudican el rendimiento?", fontsize=16, y=1.02)
     fig.tight_layout()
     _save(fig, "simpson_paradox.png")
 
@@ -764,7 +761,7 @@ def plot_causal_falsification():
 
 def main():
     print("Generando imágenes para módulo 11: Grafos Causales\n")
-    plot_simpson_berkeley()
+    plot_simpson_beca()
     plot_graph_surgery()
     plot_confounding_adjustment()
     plot_rct_balance()

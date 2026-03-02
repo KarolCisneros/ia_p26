@@ -11,55 +11,51 @@ title: "Estructuras Causales"
 
 ## La Paradoja de Simpson
 
-En 1973, la Universidad de California en Berkeley fue acusada de discriminación contra mujeres en sus admisiones a posgrado. Los números agregados parecían claros:
+Una universidad quiere saber si sus becas mejoran el rendimiento académico. Compara a los estudiantes con beca y sin beca:
 
-| | Solicitantes | Admitidos | Tasa |
+| | Estudiantes | Promedio alto | Tasa |
 |---|---:|---:|---:|
-| **Hombres** | 8,442 | 3,714 | **44%** |
-| **Mujeres** | 4,321 | 1,512 | **35%** |
+| **Con beca** | 1,000 | 660 | **66%** |
+| **Sin beca** | 1,000 | 740 | **74%** |
 
-La diferencia es notable: los hombres fueron admitidos a una tasa 9 puntos porcentuales mayor. ¿Discriminación?
+Los becados rinden peor. ¿Las becas perjudican el rendimiento?
 
-Pero al desglosar por **departamento**, la historia cambia completamente:
+Pero al desglosar por **nivel socioeconómico (NSE)**, la historia cambia completamente:
 
-| Departamento | Hombres (admitidos) | Mujeres (admitidas) |
+| NSE | Con beca (promedio alto) | Sin beca (promedio alto) |
 |:---:|:---:|:---:|
-| A | 62% | **82%** |
-| B | 63% | **68%** |
-| C | 37% | 34% |
-| D | 33% | **35%** |
-| E | 28% | 24% |
-| F | 6% | **7%** |
+| Bajo | 480/800 = **60%** | 100/200 = 50% |
+| Alto | 180/200 = **90%** | 640/800 = 80% |
 
-Departamento por departamento, las mujeres tenían tasas de admisión **iguales o superiores**. ¿Cómo es posible que los datos agregados digan lo contrario?
+Dentro de cada grupo de NSE, los becados rinden **mejor**. ¿Cómo es posible que los datos agregados digan lo contrario?
 
-![Paradoja de Simpson: Berkeley 1973]({{ '/11_grafos_causales/images/simpson_paradox.png' | url }})
+![Paradoja de Simpson: becas y rendimiento]({{ '/11_grafos_causales/images/simpson_paradox.png' | url }})
 
-La respuesta: **las mujeres se postularon en mayor proporción a departamentos más competitivos** (con tasas de admisión bajas para todos). Pero, ¿cuál es exactamente la estructura causal? Depende de cómo modelemos el problema — y esto tiene consecuencias:
+La respuesta: **la mayoría de las becas se asignan a estudiantes de NSE bajo**, que tienen menor rendimiento de base. En el agregado, el grupo "con beca" está dominado por estudiantes de NSE bajo, y el grupo "sin beca" por estudiantes de NSE alto. Pero, ¿cuál es exactamente la estructura causal? Depende de cómo modelemos el problema — y esto tiene consecuencias:
 
-**Interpretación 1 (chain — mediación):** El género influye en la *elección* de departamento, y el departamento determina la tasa de admisión. Aquí el departamento es un **mediador**:
+**Interpretación 1 (chain — mediación):** El NSE determina quién recibe beca, y la beca mejora el rendimiento. Aquí la beca es un **mediador**:
 
 ```mermaid
 graph LR
-    G(("Género")) -->|"elección"| D(("Departamento"))
-    D -->|"tasa"| A(("Admisión"))
+    N(("NSE")) -->|"asignación"| B(("Beca"))
+    B -->|"efecto"| R(("Rendimiento"))
 ```
 
-En esta lectura, la pregunta "¿hay discriminación?" se responde mirando el **efecto directo** de género sobre admisión *dentro* de cada departamento. Desglosar por departamento es correcto porque queremos aislar ese efecto directo.
+En esta lectura, la pregunta "¿las becas ayudan?" se responde mirando el **efecto directo** de la beca sobre el rendimiento *dentro* de cada nivel de NSE. Desglosar por NSE es correcto porque queremos aislar ese efecto directo.
 
-**Interpretación 2 (fork — confounding):** Cada departamento tiene su propia selectividad (A es fácil, F es difícil). La selectividad del departamento influye tanto en quién aplica como en quién es admitido. Aquí la selectividad es un **confounder**:
+**Interpretación 2 (fork — confounding):** El NSE influye tanto en quién recibe beca como en el rendimiento. Aquí el NSE es un **confounder**:
 
 ```mermaid
 graph TD
-    S(("Selectividad<br/>del depto.")) --> G2(("Quiénes<br/>aplican"))
-    S --> A2(("Tasa de<br/>admisión"))
+    N2(("NSE")) --> B2(("Quiénes reciben<br/>beca"))
+    N2 --> R2(("Rendimiento"))
 ```
 
-En esta lectura, desglosar por departamento **ajusta por el confounder** y elimina la correlación espuria.
+En esta lectura, desglosar por NSE **ajusta por el confounder** y elimina la correlación espuria.
 
-**La lección clave:** ambas interpretaciones conducen a la misma acción (desglosar por departamento), pero por **razones causales distintas** (aislar el efecto directo vs. eliminar confounding). Los datos no distinguen entre ellas — necesitas **conocimiento del dominio** para decidir cuál DAG es correcto. Este es un tema central del módulo: la causalidad viene del modelo, no de los datos.
+**La lección clave:** ambas interpretaciones conducen a la misma acción (desglosar por NSE), pero por **razones causales distintas** (aislar el efecto directo vs. eliminar confounding). Los datos no distinguen entre ellas — necesitas **conocimiento del dominio** para decidir cuál DAG es correcto. Este es un tema central del módulo: la causalidad viene del modelo, no de los datos.
 
-Para el resto del módulo adoptaremos la **interpretación fork** (selectividad como confounder), que es la más usada en la literatura y la que motiva la fórmula de ajuste.
+Para el resto del módulo adoptaremos la **interpretación fork** (NSE como confounder), que es la más usada en la literatura y la que motiva la fórmula de ajuste.
 
 Esta paradoja no es un caso aislado. Aparece en:
 
@@ -129,7 +125,7 @@ $Z$ es un **confounder** (variable de confusión): crea una correlación espuria
 2. **Controlar:** incluir $Z$ como covariable en una regresión ($Y \sim X + Z$), que calcula el efecto de $X$ "a igualdad de $Z$"
 3. **Filtrar:** mirar solo los datos donde $Z = z$ (para un valor fijo $z$)
 
-En la paradoja de Simpson, "condicionar en Departamento" = analizar cada departamento por separado. Dentro de cada departamento, la correlación espuria entre género y admisión desaparece.
+En la paradoja de Simpson, "condicionar en NSE" = analizar cada nivel socioeconómico por separado. Dentro de cada grupo de NSE, la correlación espuria entre beca y rendimiento desaparece.
 :::
 
 **Regla del fork:** $X$ e $Y$ están correlacionados. Pero si condicionamos en $Z$ (fijamos su valor), la correlación **desaparece**:
