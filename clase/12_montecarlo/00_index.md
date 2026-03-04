@@ -37,6 +37,9 @@ Elige **uno** de los siguientes, o propón el tuyo:
 | [03 — Opciones Financieras](notebooks/aplicaciones/03_opcion_financiera.ipynb) | Pricing de opciones europeas y asiáticas con GBM | numpy, scipy |
 | [04 — Inferencia Bayesiana](notebooks/aplicaciones/04_inferencia_bayesiana.ipynb) | Rejection sampling, IS, preview de MCMC | numpy, scipy |
 | [05 — Caminata Aleatoria](notebooks/aplicaciones/05_caminata_aleatoria.ipynb) | Difusión, conexión con Los Álamos, puzzle de Pólya | numpy, matplotlib |
+| [06 — Modelo de Ising](notebooks/aplicaciones/06_ising_metropolis.ipynb) | Metropolis-Hastings en su aplicación original; transiciones de fase; conexión a ML moderno | numpy, matplotlib |
+| [07 — Torneos Deportivos](notebooks/aplicaciones/07_torneos_deportivos.ipynb) | Simulación de Champions League con ratings Elo; suerte vs. talento; formatos de torneo | numpy, scipy |
+| [08 — Epidemias Estocásticas](notebooks/aplicaciones/08_epidemias_sir.ipynb) | Modelo SIR estocástico; extinción aleatoria; inmunidad de rebaño; $R_0$ como umbral probabilístico | numpy, scipy |
 
 ### Proponer tu propia aplicación
 
