@@ -34,29 +34,40 @@ La respuesta determina *completamente* el algoritmo.
 ## 2. El pseudocódigo genérico
 
 ```
-función BUSQUEDA-GENERICA(problema):
-    frontera ← NUEVA-FRONTERA(problema.inicio)
-    explorado ← {}
-    padre ← {problema.inicio: null}
+function GENERIC-SEARCH(problema):
 
-    mientras frontera no esté vacía:
-        nodo ← frontera.SELECCIONAR()            ← ¡Aquí está toda la magia!
+    # ── Inicialización ────────────────────────────────────────────────────
+    frontera ← new Frontier()               # estructura de datos vacía — Cola, Pila, etc.
+    frontera.push(problema.inicio)          # metemos el nodo de inicio como primer pendiente
 
-        si problema.ES-META(nodo):
-            devolver RECONSTRUIR-CAMINO(padre, nodo)
+    explorado ← empty set                   # conjunto de nodos ya procesados — empieza vacío
+    padre ← { problema.inicio: null }       # tabla "llegué a X desde Y"; el inicio no tiene padre
 
-        explorado.añadir(nodo)
+    # ── Bucle principal ───────────────────────────────────────────────────
+    while frontera is not empty:            # mientras haya nodos pendientes de explorar...
 
-        para cada vecino de problema.VECINOS(nodo):
-            si vecino no está en explorado
-            y vecino no está en frontera:
-                padre[vecino] ← nodo
-                frontera.AÑADIR(vecino)
+        nodo ← frontera.pop()              # *** ÚNICA LÍNEA QUE CAMBIA ENTRE ALGORITMOS ***
+                                            #   Cola (FIFO) → pop el más ANTIGUO  →  BFS
+                                            #   Pila (LIFO) → pop el más RECIENTE →  DFS
 
-    devolver FALLO
+        if problema.is_goal(nodo):          # ¿este nodo es la solución que buscamos?
+            return reconstruct(padre, nodo) #   sí → seguir padres hacia atrás = camino completo
+
+        explorado.add(nodo)                 # marcamos: ya procesamos este nodo, no volver a él
+
+        for each vecino in problema.neighbors(nodo):  # miramos todos los nodos conectados a nodo
+
+            if vecino not in explorado      # condición 1: ¿ya lo procesamos completamente?
+            and vecino not in frontera:     # condición 2: ¿ya está en la lista de pendientes?
+                                            #   si pasa ambas condiciones → es nuevo, lo añadimos
+
+                padre[vecino] ← nodo        # registramos: "llegué a vecino viniendo desde nodo"
+                frontera.push(vecino)       # añadimos vecino a la lista de pendientes
+
+    return FAILURE                          # vaciamos la frontera sin encontrar meta → sin solución
 ```
 
-Solo hay **una línea que cambia** entre todos los algoritmos de búsqueda no informada: cómo `frontera.SELECCIONAR()` elige el siguiente nodo.
+Solo hay **una línea que cambia** entre todos los algoritmos: `frontera.pop()`. Todo lo demás — el bucle, el conjunto explorado, la tabla de padres, la expansión de vecinos — es idéntico.
 
 ---
 
