@@ -33,6 +33,16 @@ La respuesta determina *completamente* el algoritmo.
 
 ## 2. El pseudocódigo genérico
 
+**Idea en palabras simples:**
+
+Mantén dos listas: una de nodos *pendientes* (la frontera) y una de nodos *ya vistos* (explorado). Empieza metiendo el nodo inicial a la frontera. Luego repite lo siguiente hasta que no queden pendientes:
+
+1. Saca un nodo de la frontera.
+2. Si es la meta, reconstruye el camino y termina.
+3. Si no, márcalo como visto y mira a todos sus vecinos. Por cada vecino que no hayas visto todavía y que no esté ya en la lista de pendientes, anota de dónde vino y agrégalo a la lista de pendientes.
+
+Eso es todo. La única pregunta que queda es: **¿cuál nodo sacas primero de la frontera?** Esa decisión define el algoritmo.
+
 ```
 function GENERIC-SEARCH(problema):
 
@@ -120,30 +130,59 @@ Con el conjunto explorado, en el paso 3 al intentar añadir A, el algoritmo ve q
 
 ## 5. El truco del conjunto sombra para `contains` eficiente
 
-Implementar `contains` sobre una lista o deque es $O(n)$ — hay que revisar cada elemento. Para grafos grandes, esto destruye el rendimiento.
+### El problema
 
-La solución es mantener un **conjunto sombra** (*shadow set*) paralelo a la estructura principal:
+Mira esta línea del pseudocódigo:
+
+```
+if vecino not in explorado
+and vecino not in frontera:   ← ¿cómo sabemos si vecino ya está aquí?
+```
+
+Para `explorado` usamos un `set` de Python desde el principio — la verificación es $O(1)$, rápida.
+
+El problema es la **frontera**. Si la implementamos como una cola (`deque`) o una pila (`list`), la pregunta "¿está este nodo ya en la frontera?" requiere recorrer la estructura entera elemento por elemento: $O(n)$. En un grafo con millones de nodos, esta verificación se ejecuta millones de veces. El algoritmo se vuelve inaceptablemente lento.
+
+### La solución: mantener dos estructuras sincronizadas
+
+La idea es simple: además de la cola (que necesitamos para el orden FIFO), mantenemos un `set` paralelo que contiene exactamente los mismos nodos. El `set` no sirve para ordenar — solo para responder "¿está X aquí?" en $O(1)$.
+
+A ese `set` paralelo lo llamamos **conjunto sombra** porque sigue a la cola como una sombra: cada vez que añadimos un nodo a la cola, lo añadimos también al set; cada vez que lo sacamos de la cola, lo quitamos también del set. Siempre contienen los mismos elementos.
+
+```
+Cola:    [A, C, D, F]       ← mantiene el ORDEN (quién salió primero)
+Set:     {A, C, D, F}       ← responde ¿está X? en O(1)
+```
+
+### Implementación
 
 ```python
 class ColaDeFrontera:
     def __init__(self):
-        self.cola = deque()     # para el orden FIFO
-        self.miembros = set()   # para contains en O(1)
+        self.cola = deque()     # mantiene el orden FIFO
+        self.miembros = set()   # permite contains en O(1)
 
     def push(self, nodo, padre=None):
-        self.cola.append(nodo)
-        self.miembros.add(nodo)
+        self.cola.append(nodo)  # añadir a la cola...
+        self.miembros.add(nodo) # ...y al set al mismo tiempo → siempre sincronizados
 
     def pop(self):
-        nodo = self.cola.popleft()
-        self.miembros.discard(nodo)
+        nodo = self.cola.popleft()   # sacar de la cola (el más antiguo)...
+        self.miembros.discard(nodo)  # ...y del set al mismo tiempo
         return nodo
 
     def contains(self, nodo):
-        return nodo in self.miembros  # O(1)
+        return nodo in self.miembros  # O(1) — consultamos el set, no la cola
 ```
 
-El coste es duplicar el espacio de la frontera — siempre aceptable porque la frontera ya vive en memoria.
+### La implicación: tiempo vs. memoria
+
+| Enfoque | `contains` | Memoria |
+|---|---|---|
+| Solo `deque` | $O(n)$ — revisar uno por uno | $n$ nodos |
+| `deque` + `set` sombra | $O(1)$ — tabla hash | $2n$ nodos |
+
+Duplicamos el uso de memoria de la frontera a cambio de que cada verificación sea instantánea. En la práctica siempre vale la pena: la frontera ocupa una fracción pequeña de la memoria total, y la ganancia en velocidad es enorme.
 
 ---
 
