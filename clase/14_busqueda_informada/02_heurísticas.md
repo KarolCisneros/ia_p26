@@ -86,15 +86,19 @@ Esto es la **desigualdad triangular**: la estimación desde $n$ no puede superar
 Consistencia exige: h(n) ≤ c(n,n') + h(n')
 ```
 
+**Intuición: los valores de $h$ no pueden dar saltos bruscos.** Si estoy en $n$ y doy un paso a $n'$, mi estimación del costo restante debería cambiar *suavemente* — no puede caer de golpe más de lo que costó el paso. Formalmente: $h(n) - h(n') \leq \text{costo}(n, n')$.
+
+Otra forma de verlo: si la estimación desde $n$ pudiera ser mucho mayor que el costo del paso más la estimación desde $n'$, significaría que $h$ "inventa" dificultad donde no la hay — y A\* podría confundirse pensando que $n$ es un nodo muy difícil de continuar, cuando en realidad llegar a $n'$ es barato.
+
 **Relación entre consistencia y admisibilidad:**
 
 > Consistencia $\Rightarrow$ Admisibilidad (pero no al revés)
 
-Una heurística consistente es siempre admisible. Una admisible puede o no ser consistente.
+Una heurística consistente es siempre admisible. Pero **una heurística admisible puede no ser consistente**: puede subestimar correctamente el costo total desde cada nodo, pero hacerlo de forma "irregular" — subiendo y bajando entre nodos adyacentes de manera inconsistente con los costos de las aristas.
 
-**¿Por qué importa la consistencia?** Con una heurística consistente, la primera vez que A\* expande un nodo, ha encontrado el camino óptimo hasta él — igual que Dijkstra con pesos no negativos. Esto significa que el conjunto `explorado` funciona exactamente como en el algoritmo genérico: **nunca necesitamos reabrir un nodo ya explorado**.
+**¿Por qué importa la consistencia?** Con una heurística consistente, los valores $f(n) = g(n) + h(n)$ son **monótonamente no decrecientes** a lo largo de cualquier camino. Esto significa que la primera vez que A\* expande un nodo, ha encontrado el camino óptimo hasta él — nunca necesitamos reabrir un nodo del conjunto `explorado`.
 
-Sin consistencia (solo admisibilidad), A\* podría necesitar reabrir nodos ya explorados al encontrar caminos más baratos, complicando la implementación. En la práctica, la mayoría de heurísticas útiles son consistentes.
+Sin consistencia (solo admisibilidad), A\* todavía encuentra la solución óptima, pero podría necesitar reabrir nodos ya explorados al descubrir caminos más baratos. La implementación se complica: en lugar de un conjunto `explorado` definitivo, habría que comparar costos al reinsertar.
 
 :::example{title="Comprobando consistencia: distancia Manhattan"}
 Para la distancia Manhattan en cuadrícula 4-conexa:
@@ -107,6 +111,31 @@ Para la distancia Manhattan en cuadrícula 4-conexa:
   - La diferencia $h(n) - h(n') \leq 1 = \text{costo}(n, n')$ por la desigualdad triangular de valores absolutos.
 
 Por tanto Manhattan es **consistente** (y por tanto admisible).
+:::
+
+:::example{title="Contraejemplo: admisible pero NO consistente"}
+Construimos una heurística admisible que viola la consistencia en un grafo de 3 nodos:
+
+```
+Grafo:
+  S ──1── A ──1── Meta
+
+h* (costo real óptimo):
+  h*(S) = 2,  h*(A) = 1,  h*(Meta) = 0
+
+Heurística h (admisible: h ≤ h* en todo nodo):
+  h(S) = 2,  h(A) = 0,  h(Meta) = 0
+```
+
+**¿Es admisible?** Sí: $h(S)=2 \leq h^*(S)=2$, $h(A)=0 \leq h^*(A)=1$, $h(\text{Meta})=0$. Nunca sobreestima.
+
+**¿Es consistente?** Comprobamos la arista $S \to A$:
+
+$$h(S) \leq \text{costo}(S, A) + h(A) \quad \Rightarrow \quad 2 \leq 1 + 0 = 1 \quad \text{¡FALSO!}$$
+
+La consistencia falla porque $h$ cae bruscamente de 2 a 0 al pasar de $S$ a $A$, pero el paso solo cuesta 1. Es como si la heurística dijera «desde $S$ hay mucho que caminar, pero desde $A$ ya estás prácticamente ahí» — cuando en realidad solo se dio un paso de costo 1.
+
+**Consecuencia práctica**: A\* con esta $h$ podría expandir $A$ con $f(A) = g(A) + h(A) = 1 + 0 = 1$ y marcarlo como explorado. Pero luego, al llegar a Meta desde $A$ con $g(\text{Meta})=2$, el valor $f=2$ es mayor que $f(A)=1$ previo. Los valores de $f$ no son monótonos → el conjunto `explorado` no es fiable sin reapertura.
 :::
 
 ---
@@ -133,7 +162,16 @@ h(n) > h*(n) en algún n →  A* inadmisible: rápido pero puede
 
 ![Espectro de calidad de la heurística]({{ '/14_busqueda_informada/images/03_heuristic_spectrum.png' | url }})
 
-La imagen muestra el mismo problema resuelto con cuatro heurísticas de calidad creciente. Los nodos explorados (en color) disminuyen dramáticamente a medida que $h$ mejora.
+El problema: S y G están en la misma columna con una pared horizontal entre ellos. $h_{\text{Manhattan}}(S, G) = 17$, pero el camino real requiere rodear la pared: $h^*(S) = 35$ (más del doble). Cuatro heurísticas, misma solución óptima:
+
+| Heurística | Nodos expandidos | Forma visible |
+|---|:---:|---|
+| $h = 0$ (Dijkstra) | 452 | Inundación rectangular — sin dirección |
+| $h = \frac{h_M}{2}$ (débil) | 435 | Cruz ancha — ligero sesgo hacia abajo |
+| $h = h_M$ (Manhattan) | 284 | Columna hacia abajo + cruz en la pared |
+| $h = h^*$ (exacta) | 171 | Corredor en L — izquierda, abajo, derecha |
+
+**La clave**: Manhattan dice «baja recto 17 pasos» pero la pared lo obliga a desviarse. A\* con Manhattan sigue esa intuición equivocada hasta chocar. A\* con $h^*$ sabe desde el primer paso que debe ir izquierda.
 
 ---
 

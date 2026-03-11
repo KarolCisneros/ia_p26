@@ -257,20 +257,22 @@ def plot_weighted_graph_and_bfs_failure() -> None:
     fig.suptitle("Grafos con pesos: por qué BFS da la respuesta incorrecta",
                  fontsize=13, fontweight="bold", y=1.02)
 
-    # Panel 1: simple weighted graph
-    pos1 = {"A": (0, 1), "B": (1, 2), "C": (2, 1), "D": (1, 0)}
-    edges1 = [("A", "B", 1), ("B", "C", 1), ("A", "D", 5), ("D", "C", 1)]
+    # Panel 1: simple weighted graph showing the two path options
+    pos1 = {"A": (0, 1.5), "B": (1, 2.5), "C": (2, 2.5),
+            "D": (1, 0.5), "Meta": (3, 1.5)}
+    edges1 = [("A", "B", 1), ("B", "C", 1), ("C", "Meta", 1),
+              ("A", "D", 10), ("D", "Meta", 1)]
     _draw_graph_weighted(axes[0], pos1, edges1,
-                         node_colors={"A": COLORS["orange"], "C": COLORS["green"]},
+                         node_colors={"A": COLORS["orange"], "Meta": COLORS["green"]},
                          title="Grafo con pesos\n(cada arista tiene un costo)")
 
-    # Panel 2: BFS wrong path vs optimal
+    # Panel 2: BFS wrong path (2 hops, expensive) vs optimal (3 hops, cheap)
     pos2 = {"A": (0, 1.5), "B": (1, 2.5), "C": (2, 2.5),
             "D": (1, 0.5), "Meta": (3, 1.5)}
     edges2 = [("A", "B", 1), ("B", "C", 1), ("C", "Meta", 1),
-              ("A", "D", 2), ("D", "Meta", 1)]
+              ("A", "D", 10), ("D", "Meta", 1)]
     nc2 = {"A": COLORS["orange"], "Meta": COLORS["green"],
-           "B": COLORS["red"], "C": COLORS["red"]}
+           "D": COLORS["red"]}
 
     # Draw all edges first
     ax = axes[1]
@@ -282,15 +284,15 @@ def plot_weighted_graph_and_bfs_failure() -> None:
                 color=COLORS["dark"],
                 bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none"))
 
-    # BFS path (wrong) in red dashes
-    bfs_path = [("A", "B"), ("B", "C"), ("C", "Meta")]
+    # BFS path (wrong): A→D→Meta — 2 hops but cost=11
+    bfs_path = [("A", "D"), ("D", "Meta")]
     for u, v in bfs_path:
         x0, y0 = pos2[u]; x1, y1 = pos2[v]
         ax.plot([x0, x1], [y0, y1], color=COLORS["red"], lw=3,
                 linestyle="--", zorder=2, alpha=0.8)
 
-    # Optimal path in green solid
-    opt_path = [("A", "D"), ("D", "Meta")]
+    # Optimal path: A→B→C→Meta — 3 hops but cost=3
+    opt_path = [("A", "B"), ("B", "C"), ("C", "Meta")]
     for u, v in opt_path:
         x0, y0 = pos2[u]; x1, y1 = pos2[v]
         ax.plot([x0, x1], [y0, y1], color=COLORS["green"], lw=3, zorder=2)
@@ -307,15 +309,15 @@ def plot_weighted_graph_and_bfs_failure() -> None:
     ax.set_ylim(-0.2, 3.2)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.set_title("BFS elige el camino de menos saltos (costo=3)\nóptimo real tiene costo=3 — ¡pero por otra ruta!",
+    ax.set_title("BFS: 2 saltos, costo=11  (menos saltos != mas barato)\nOptimo: 3 saltos, costo=3",
                  fontsize=10, fontweight="bold", pad=8)
 
     # Annotations
-    axes[1].annotate("BFS: A→B→C→G\ncosto = 1+1+1 = 3 saltos, costo = 3",
+    axes[1].annotate("BFS: A->D->G\n2 saltos, costo = 10+1 = 11  <-- INCORRECTO",
                      xy=(0.5, 0.08), xycoords="axes fraction", fontsize=9,
                      color=COLORS["red"],
                      bbox=dict(boxstyle="round", fc="#FDEDEC", ec=COLORS["red"]))
-    axes[1].annotate("Optimo: A->D->G\n2 saltos, costo = 2+1 = 3",
+    axes[1].annotate("Optimo: A->B->C->G\n3 saltos, costo = 1+1+1 = 3",
                      xy=(0.5, 0.22), xycoords="axes fraction", fontsize=9,
                      color=COLORS["green"],
                      bbox=dict(boxstyle="round", fc="#EAFAF1", ec=COLORS["green"]))
@@ -381,40 +383,79 @@ def plot_priority_queue_order() -> None:
 # 3. Heuristic spectrum
 # ---------------------------------------------------------------------------
 def plot_heuristic_spectrum() -> None:
-    """Show the h(n) quality spectrum: h=0 vs h=loose vs h=Manhattan vs h=h*."""
-    rows, cols = 12, 12
-    start = (1, 1)
-    goal = (10, 10)
-    walls = set()
-    # Add a few obstacles
-    for c in range(3, 9):
-        walls.add((5, c))
-    walls.add((5, 9))
+    """Show the h(n) quality spectrum.
+
+    Key design: start and goal are in the SAME column (col 10).
+    A wide horizontal wall at row 11 (cols 2-19) forces ALL paths to detour sideways.
+
+    Manhattan says: "go 17 steps straight down" — but the wall demands going sideways.
+    h*(start) = 35 (must go left to col 1, cross, then right to goal).
+    This gap (Manhattan=17, h*=35) makes the four panels visually distinct:
+
+      h=0          : huge flood — no direction at all
+      h=Manhattan/3: slight downward bias — barely better than h=0
+      h=Manhattan  : beelines DOWN, hits wall, then spreads searching for gap
+      h=h* (exact) : immediately heads LEFT through the gap — thin L-corridor
+    """
+    from collections import deque
+
+    rows, cols = 22, 22
+    start = (2, 10)   # top, center column
+    goal  = (19, 10)  # bottom, SAME column — Manhattan = 17
+
+    # Wide horizontal wall at row 11, cols 2-19
+    # Gap on left: cols 0-1;  gap on right: cols 20-21
+    walls: set = set()
+    for c in range(2, 20):
+        walls.add((11, c))
+
+    # ── Precompute h*(n) via BFS backwards from goal ──────────────────────────
+    # h*(n) = exact shortest-path distance from n to goal (accounts for wall).
+    # At start: h*(start)=35 >> Manhattan(start,goal)=17 — wall triples the work.
+    h_star: dict = {goal: 0}
+    bfs_q: deque = deque([goal])
+    while bfs_q:
+        node = bfs_q.popleft()
+        r, c = node
+        for nb in _neighbors(r, c, rows, cols, walls):
+            if nb not in h_star:
+                h_star[nb] = h_star[node] + 1
+                bfs_q.append(nb)
+
+    INF = 9999
 
     heuristics = [
-        ("h(n) = 0\n(Dijkstra)", lambda n: 0, "#AED6F1", "#2E86AB"),
-        ("h(n) = Manhattan/2\n(admisible, débil)", lambda n: _manhattan(n, goal) / 2,
-         "#A9DFBF", "#27AE60"),
-        ("h(n) = Manhattan\n(admisible, fuerte)", lambda n: _manhattan(n, goal),
-         "#F9E79F", "#F39C12"),
-        ("h(n) ≈ h*(n)\n(casi perfecta)", lambda n: _manhattan(n, goal) * 0.95,
-         "#F5CBA7", "#E94F37"),
+        # (subtitle, h_fn, explored_color, path_color)
+        ("h(n) = 0\n(Dijkstra puro)\nsin informacion",
+         lambda n: 0,
+         "#AED6F1", "#1A6EA0"),
+        ("h(n) = Manhattan/2\n(admisible, debil)\nguia insuficiente ante la pared",
+         lambda n: _manhattan(n, goal) * 0.5,
+         "#A9DFBF", "#1E8449"),
+        ("h(n) = Manhattan\n(admisible, buena)\nbaja derecho, choca con pared",
+         lambda n: _manhattan(n, goal),
+         "#F9E79F", "#B7770D"),
+        ("h(n) = h*(n)\n(exacta)\ncorredor optimo directo",
+         lambda n: h_star.get(n, INF),
+         "#FADBD8", "#C0392B"),
     ]
 
-    fig, axes = plt.subplots(1, 4, figsize=(16, 5))
-    fig.suptitle("Calidad de la heurística: más ajustada → menos expansiones",
-                 fontsize=13, fontweight="bold", y=1.02)
+    fig, axes = plt.subplots(1, 4, figsize=(18, 5.5))
+    fig.suptitle(
+        "Calidad de h(n): misma meta, mismo camino optimo — distinta exploracion\n"
+        "S y G estan en la misma columna. La pared obliga a rodear.  "
+        "Manhattan(S,G)=17  pero  h*(S)=35",
+        fontsize=11, fontweight="bold", y=1.03)
 
-    for ax, (title, h_fn, c_exp, c_path) in zip(axes, heuristics):
-        # Compute g values for drawing expansion intensity
-        g = {start: 0}
-        parent = {start: None}
+    for ax, (subtitle, h_fn, c_exp, c_path) in zip(axes, heuristics):
+        g_vals: dict = {start: 0}
+        parent: dict = {start: None}
         frontier = [(h_fn(start), 0, start)]
-        explored = set()
-        order = []
+        explored: set = set()
+        order: list = []
 
         while frontier:
-            f, cost, node = heapq.heappop(frontier)
+            _, cost, node = heapq.heappop(frontier)
             if node in explored:
                 continue
             explored.add(node)
@@ -423,24 +464,28 @@ def plot_heuristic_spectrum() -> None:
                 break
             r, c = node
             for nb in _neighbors(r, c, rows, cols, walls):
-                new_g = g[node] + 1
-                if nb not in g or new_g < g[nb]:
-                    g[nb] = new_g
+                new_g = cost + 1
+                if nb not in g_vals or new_g < g_vals[nb]:
+                    g_vals[nb] = new_g
                     parent[nb] = node
                     heapq.heappush(frontier, (new_g + h_fn(nb), new_g, nb))
 
-        path = []
+        # Reconstruct path
+        path: list = []
         n = goal
         while n is not None:
             path.append(n)
             n = parent.get(n)
         path.reverse()
+        if not path or path[0] != start:
+            path = []
 
+        # Build RGB image
         img = np.ones((rows, cols, 3))
-        for r in range(rows):
-            for c in range(cols):
-                if (r, c) in walls:
-                    img[r, c] = [0.2, 0.2, 0.2]
+        for r_i in range(rows):
+            for c_i in range(cols):
+                if (r_i, c_i) in walls:
+                    img[r_i, c_i] = [0.15, 0.15, 0.15]
 
         ec = mcolors.to_rgb(c_exp)
         for node in order:
@@ -453,17 +498,17 @@ def plot_heuristic_spectrum() -> None:
                 img[node[0], node[1]] = pc
 
         img[start[0], start[1]] = mcolors.to_rgb(COLORS["orange"])
-        img[goal[0], goal[1]] = mcolors.to_rgb(COLORS["green"])
+        img[goal[0], goal[1]]   = mcolors.to_rgb(COLORS["green"])
 
         ax.imshow(img, interpolation="nearest", aspect="equal")
         ax.text(start[1], start[0], "S", ha="center", va="center",
-                fontsize=7, fontweight="bold", color="white")
-        ax.text(goal[1], goal[0], "G", ha="center", va="center",
-                fontsize=7, fontweight="bold", color="white")
+                fontsize=8, fontweight="bold", color="white")
+        ax.text(goal[1],  goal[0],  "G", ha="center", va="center",
+                fontsize=8, fontweight="bold", color="white")
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.set_title(f"{title}\n{len(order)} nodos expandidos",
-                     fontsize=9, fontweight="bold")
+        ax.set_title(f"{subtitle}\n{len(order)} nodos expandidos",
+                     fontsize=8, fontweight="bold", pad=4)
 
     fig.tight_layout()
     _save(fig, "03_heuristic_spectrum.png")

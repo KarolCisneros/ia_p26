@@ -38,20 +38,20 @@ En cuanto los costos difieren, **BFS da la respuesta incorrecta**:
 ```
 Grafo ponderado:
 
-    A ──1── B ──1── Meta
+    A ──1── B ──1── C ──1── Meta
     │
-    2
+    10
     │
-    D ──1── Meta
+    D ──────────────────1── Meta
 
 BFS responde: A → D → Meta  (2 saltos — el más corto en hops)
-Costo real:   2 + 1 = 3
+Costo real:   10 + 1 = 11
 
-Pero A → B → Meta  también tiene 2 saltos y costo:
-  1 + 1 = 2  ← ¡más barato!
+Pero A → B → C → Meta tiene 3 saltos y costo:
+  1 + 1 + 1 = 3  ← ¡mucho más barato!
 ```
 
-BFS eligió mal porque contó saltos, no costos. Necesitamos un algoritmo que expanda el nodo con el menor **costo acumulado**, no el que esperó más tiempo en la cola.
+BFS eligió el camino de **menos saltos** — pero ese camino es casi 4 veces más caro. Cuantos más saltos no implica más caro: la arista A→D cuesta 10 mientras cada paso por B y C cuesta solo 1. Necesitamos un algoritmo que expanda el nodo con el menor **costo acumulado**, no el que esperó más tiempo en la cola.
 
 ![Grafos con pesos: BFS falla]({{ '/14_busqueda_informada/images/01_weighted_graph_bfs_failure.png' | url }})
 

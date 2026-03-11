@@ -38,34 +38,76 @@ BFS garantiza el camino con menos aristas. Pero en grafos con pesos, \"menos ari
 
 ```
 Grafo ponderado:
-    A ──1── B ──1── Meta
-    │
-    2
-    │
-    D ──1── Meta
 
-BFS responde: A → D → Meta  (2 saltos, costo = 3)
-Dijkstra:     A → B → Meta  (2 saltos, costo = 2) ← ¡más barato!
+    A ──1── B ──1── C ──1── Meta   (3 saltos, costo = 3)
+    │
+    10
+    │
+    D ──────────────────1── Meta   (2 saltos, costo = 11)
+
+BFS responde: A → D → Meta  (2 saltos — el más corto en hops)
+Costo real:   10 + 1 = 11   ← ¡casi 4 veces más caro!
+
+Dijkstra:     A → B → C → Meta  (3 saltos, costo = 1+1+1 = 3) ← óptimo
 ```
 
-BFS falló porque contó aristas, no costos. Dijkstra usa una cola de prioridad para expandir siempre el nodo con menor $g(n)$ — el costo real acumulado desde el inicio.
+BFS eligió el camino de menos saltos, pero ese camino usa la arista cara A→D (costo 10). El camino óptimo tiene **más saltos** pero aristas baratas. Dijkstra usa una cola de prioridad para expandir siempre el nodo con menor $g(n)$ — el costo real acumulado desde el inicio.
 
 ---
 
 ## 3. En lenguaje natural
 
+Dijkstra es `busqueda_generica` con una **cola de prioridad ordenada por $g(n)$** como frontera. Compáralo con las fronteras que ya conoces:
+
+| Frontera | ¿Qué saca primero? | Resultado |
+|---|---|---|
+| Cola FIFO | El nodo más antiguo (lleva más tiempo esperando) | BFS — menos saltos |
+| Pila LIFO | El nodo más reciente (el último que entró) | DFS — profundidad primero |
+| Cola de prioridad por $g$ | El nodo con **menor costo acumulado** hasta ahora | **Dijkstra** — menos costo |
+
+La única diferencia con BFS es qué criterio usa el `pop()`. BFS saca el más antiguo; Dijkstra saca el más barato. Greedy saca el que tiene menor $h$ (estimación al objetivo); Dijkstra saca el que tiene menor $g$ (costo real hasta aquí). A\* combina ambos.
+
+Además Dijkstra necesita una cosa que BFS y Greedy no necesitan: **actualizar nodos que ya están en la frontera** si encontramos un camino más barato. Eso se llama _relajar_ una arista (ver más abajo).
+
+El algoritmo paso a paso:
+
 1. Inicializa $g(\text{inicio}) = 0$ y $g(n) = \infty$ para todos los demás nodos.
-2. Crea una **cola de prioridad** con el nodo inicial (prioridad = $g(\text{inicio}) = 0$).
+   > Todavía no sabemos cómo llegar a nadie. El único costo conocido es llegar al inicio (costo 0).
+
+2. Añade el nodo inicial a la cola de prioridad con prioridad $g = 0$.
+
 3. Mientras la cola no esté vacía:
-   1. Saca el nodo con **menor $g(n)$** — el más barato hasta ahora.
+   1. Saca el nodo con **menor $g(n)$** — el nodo más barato de llegar hasta ahora. Esto es el `pop()` del algoritmo genérico.
    2. Si es la meta, reconstruye y devuelve el camino.
-   3. Márcalo como explorado (ya encontramos su camino óptimo).
-   4. Para cada vecino no explorado:
-      - Calcula $g_{\text{nuevo}} = g(\text{nodo actual}) + \text{costo}(\text{nodo actual}, \text{vecino})$.
-      - Si $g_{\text{nuevo}} < g(\text{vecino})$: **relaja** — actualiza $g(\text{vecino})$ y añade al cola.
+   3. Márcalo como explorado — con pesos no negativos, el primer `pop` de un nodo ya es su costo óptimo definitivo. No hay camino más barato esperando en la cola.
+   4. Para cada vecino no explorado, **intenta relajar** la arista:
+      - Calcula $g_{\text{nuevo}} = g(\text{nodo actual}) + \text{costo arista}$.
+      - Si $g_{\text{nuevo}} < g(\text{vecino})$: encontramos un camino más barato a ese vecino. Actualiza $g(\text{vecino}) \leftarrow g_{\text{nuevo}}$, guarda el padre, y añade/actualiza en la cola.
+      - Si $g_{\text{nuevo}} \geq g(\text{vecino})$: el camino que ya teníamos es igual o mejor. No hacemos nada.
+
 4. Si la cola se vacía sin encontrar la meta, devuelve fallo.
 
-**La operación clave es la «relajación»**: cuando encontramos un camino más barato a un vecino que el que teníamos hasta ahora, actualizamos su costo estimado. Esta es la única diferencia estructural con Greedy.
+---
+
+### ¿Qué significa «relajar» una arista?
+
+El nombre viene de la idea de que $g(n)$ empieza «tenso» (muy alto, en $\infty$) y se va _relajando_ (bajando) conforme encontramos caminos más baratos.
+
+**Relajar la arista $(u, v)$** significa: *«¿puedo llegar a $v$ más barato pasando por $u$ que por cualquier camino que conocía antes?»*
+
+```
+Antes de relajar:
+  g[v] = 10   ← el mejor camino a v que conocemos cuesta 10
+  g[u] = 3    ← acabamos de expandir u con costo 3
+  costo(u→v) = 4
+
+Calculamos:  g_nuevo = g[u] + costo(u→v) = 3 + 4 = 7
+
+¿7 < 10?  Sí → RELAJAMOS: g[v] ← 7,  padre[v] ← u
+¿7 ≥ 10?  No → No hacemos nada, el camino anterior era mejor
+```
+
+En BFS y Greedy, si un vecino ya está en la frontera simplemente lo ignoramos (ya está pendiente de procesarse). Dijkstra no puede hacer eso: podría haber descubierto un **camino más barato al mismo nodo** — y si no lo actualiza, terminará con una solución subóptima. La relajación es exactamente esa actualización.
 
 ---
 
@@ -74,39 +116,78 @@ BFS falló porque contó aristas, no costos. Dijkstra usa una cola de prioridad 
 ```
 function DIJKSTRA(problema):
 
-    # ── Inicialización ─────────────────────────────────────────────────
-    g ← dict con g[problema.inicio] = 0 y g[n] = ∞ para el resto
+    # ── Inicialización ────────────────────────────────────────────────────────
+    #
+    # g[n] = mejor costo conocido para llegar desde inicio hasta n.
+    # Al empezar no sabemos cómo llegar a ningún nodo, así que todo es ∞
+    # excepto el inicio, que cuesta 0 llegar (ya estamos ahí).
+    g ← { inicio: 0,  todos los demás: ∞ }
+
+    # La frontera es una cola de PRIORIDAD ordenada por g(n).
+    # pop() siempre devuelve el nodo más barato de alcanzar hasta ahora.
+    # ← diferencia clave con BFS (FIFO) y Greedy (ordenada por h)
     frontera ← new PriorityFrontier()
     frontera.push(problema.inicio, priority=0)
+
+    # explorado = nodos cuyo camino óptimo ya está confirmado.
+    # Una vez dentro, nunca se vuelve a tocar.
     explorado ← empty set
+
+    # padre[n] = el nodo desde el que llegamos a n por el camino más barato.
+    # Se usa al final para reconstruir el camino completo.
     padre ← { problema.inicio: null }
 
-    # ── Bucle principal ─────────────────────────────────────────────────
+    # ── Bucle principal ───────────────────────────────────────────────────────
     while frontera is not empty:
 
-        nodo ← frontera.pop()               # [P1] saca el nodo con MENOR g(n)
+        # Extraemos el nodo con MENOR g(n) — el más barato de todos los pendientes.
+        # Con pesos ≥ 0, este es su costo óptimo definitivo: ningún camino futuro
+        # puede ser más barato (los costos solo pueden crecer o mantenerse).
+        # ← esto es lo que distingue a Dijkstra de BFS (que sacaría el más antiguo)
+        nodo ← frontera.pop()
 
         if problema.is_goal(nodo):
-            return reconstruct(padre, nodo)
+            return reconstruct(padre, nodo)   # reconstruye el camino via padre[]
 
-        explorado.add(nodo)                 # [P2] primera vez = óptimo garantizado
+        # Marcamos como explorado: ya conocemos el camino óptimo a este nodo.
+        # Nunca lo volveremos a procesar aunque aparezca en la frontera otra vez.
+        explorado.add(nodo)
 
-        for each (vecino, costo) in problema.neighbors(nodo):
-            if vecino not in explorado:
-                g_nuevo = g[nodo] + costo
+        # Miramos cada vecino y preguntamos: ¿pasar por `nodo` mejora
+        # el mejor camino conocido a ese vecino?
+        for each (vecino, costo_arista) in problema.neighbors(nodo):
 
-                if g_nuevo < g.get(vecino, ∞):    # [P3] RELAJACIÓN
-                    g[vecino] = g_nuevo
-                    padre[vecino] = nodo
-                    frontera.push_or_update(vecino, priority=g_nuevo)
+            # Saltamos vecinos ya confirmados: su costo óptimo ya está fijo.
+            if vecino in explorado:
+                continue
 
-    return FAILURE
+            # Calculamos cuánto costaría llegar a `vecino` pasando por `nodo`.
+            g_nuevo = g[nodo] + costo_arista
+
+            # ── RELAJACIÓN ────────────────────────────────────────────────────
+            # ¿Es este nuevo camino más barato que el mejor que conocíamos?
+            #   Sí → actualizamos: este nuevo camino es mejor, lo registramos.
+            #   No → ignoramos: el camino anterior ya era igual o mejor.
+            #
+            # Diferencia con BFS/Greedy: ellos ignoran vecinos ya en la frontera.
+            # Dijkstra los ACTUALIZA si encontró un camino más barato.
+            if g_nuevo < g.get(vecino, ∞):
+                g[vecino]    = g_nuevo          # nuevo mejor costo a vecino
+                padre[vecino] = nodo            # venimos desde nodo
+                frontera.push_or_update(vecino, priority=g_nuevo)
+                #   ↑ si vecino ya estaba en frontera con g mayor, lo actualizamos
+                #     si no estaba, lo añadimos por primera vez
+
+    return FAILURE   # la meta no es alcanzable desde el inicio
 ```
 
-**Diferencias respecto a Greedy**:
-1. `priority = g[nodo]` en lugar de `priority = h(nodo)` — prioridad por costo real, no estimación.
-2. Se rastrea el diccionario `g` explícitamente.
-3. `push_or_update` puede actualizar la prioridad de un vecino ya en la frontera (relajación).
+**Diferencias respecto a Greedy y BFS en una línea cada una**:
+
+| Línea | BFS | Greedy | Dijkstra |
+|---|---|---|---|
+| `pop()` devuelve | El más antiguo (FIFO) | El menor $h$ (estimación) | El menor $g$ (costo real) |
+| ¿Rastrea $g$? | No | No | **Sí** — es la clave |
+| ¿Actualiza frontera? | No (ignora si ya está) | No | **Sí** — relajación |
 
 ### Versión con PriorityFrontier
 
